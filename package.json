@@ -48,7 +48,6 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.168.0",
-    "ui": "github:shadcn/ui",
     "use-debounce": "^10.0.3"
   },
   "devDependencies": {

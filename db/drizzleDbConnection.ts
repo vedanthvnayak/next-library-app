@@ -3,7 +3,9 @@ import mysql from "mysql2/promise";
 import { migrate } from "drizzle-orm/mysql2/migrator";
 import { AppEnvs } from "./read-env";
 
-const databaseUrl = AppEnvs.DATABASE_URL;
+const databaseUrl =
+  "mysql://admin:20180523252veda@library-db-aws.c7y6ekcg0kcm.ap-southeast-2.rds.amazonaws.com:3306/library_db";
+
 export interface IDrizzleAdapter {
   getPoolDrizzle: () => MySql2Database;
   getConnectionDrizzle: () => Promise<MySql2Database<Record<string, unknown>>>;
@@ -30,7 +32,7 @@ export class DrizzleManager implements IDrizzleAdapter {
     return drizzle(connection);
   }
 
-  private async runMigrations(): Promise<void> {
+  async runMigrations(): Promise<void> {
     try {
       await migrate(this.db!, {
         migrationsFolder:
@@ -42,6 +44,7 @@ export class DrizzleManager implements IDrizzleAdapter {
       throw error;
     }
   }
+
   async migrate(): Promise<MySql2Database> {
     if (!this.db && this.pool) {
       this.db = drizzle(this.pool);
