@@ -32,9 +32,6 @@ importers:
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
-      bcryptjs:
-        specifier: ^2.4.3
-        version: 2.4.3
       chart.js:
         specifier: ^4.4.4
         version: 4.4.4
@@ -120,8 +117,8 @@ importers:
         specifier: ^0.168.0
         version: 0.168.0
       ui:
-        specifier: github:shadcn/ui
-        version: git+https://git@github.com:shadcn/ui.git#81c7e44863c4f571a9818d5ac55092effbd348f1(@types/node@20.16.3)(ts-node@10.9.2(@types/node@20.16.3)(typescript@5.5.4))(typescript@5.5.4)
+        specifier: https://github.com/shadcn/ui
+        version: git+https://git@github.com:shadcn/ui.git#061083006f0122bfded841235ee58caefc9fd944(@types/node@20.16.3)(ts-node@10.9.2(@types/node@20.16.3)(typescript@5.5.4))(typescript@5.5.4)
       use-debounce:
         specifier: ^10.0.3
         version: 10.0.3(react@18.3.1)
@@ -1844,9 +1841,6 @@ packages:
   bcrypt@5.1.1:
     resolution: {integrity: sha512-AGBHOG5hPYZ5Xl9KXzU5iKq9516yEmvCKDg3ecP5kX2aB6UqTeXZxk2ELnDgDm6BQSMlLt9rDB4LoSMx0rYwww==}
     engines: {node: '>= 10.0.0'}
-
-  bcryptjs@2.4.3:
-    resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==}
 
   better-path-resolve@1.0.0:
     resolution: {integrity: sha512-pbnl5XzGBdrFU/wT4jqmJVPn2B6UHPBOhzMQkY/SPUPB6QtUXtmBHBIwCbXJol93mOpGMnQyP/+BB19q04xj7g==}
@@ -4858,8 +4852,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  ui@git+https://git@github.com:shadcn/ui.git#81c7e44863c4f571a9818d5ac55092effbd348f1:
-    resolution: {commit: 81c7e44863c4f571a9818d5ac55092effbd348f1, repo: git@github.com:shadcn/ui.git, type: git}
+  ui@git+https://git@github.com:shadcn/ui.git#061083006f0122bfded841235ee58caefc9fd944:
+    resolution: {commit: 061083006f0122bfded841235ee58caefc9fd944, repo: git@github.com:shadcn/ui.git, type: git}
     version: 0.0.1
 
   unbox-primitive@1.0.2:
@@ -6832,8 +6826,6 @@ snapshots:
       - encoding
       - supports-color
 
-  bcryptjs@2.4.3: {}
-
   better-path-resolve@1.0.0:
     dependencies:
       is-windows: 1.0.2
@@ -7592,7 +7584,7 @@ snapshots:
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0)
       eslint-plugin-jsx-a11y: 6.9.0(eslint@8.57.0)
       eslint-plugin-react: 7.35.0(eslint@8.57.0)
       eslint-plugin-react-hooks: 4.6.2(eslint@8.57.0)
@@ -7651,7 +7643,7 @@ snapshots:
       is-bun-module: 1.1.0
       is-glob: 4.0.3
     optionalDependencies:
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0)
     transitivePeerDependencies:
       - '@typescript-eslint/parser'
       - eslint-import-resolver-node
@@ -7699,7 +7691,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0):
+  eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0):
     dependencies:
       array-includes: 3.1.8
       array.prototype.findlastindex: 1.2.5
@@ -10213,7 +10205,7 @@ snapshots:
 
   typescript@5.5.4: {}
 
-  ui@git+https://git@github.com:shadcn/ui.git#81c7e44863c4f571a9818d5ac55092effbd348f1(@types/node@20.16.3)(ts-node@10.9.2(@types/node@20.16.3)(typescript@5.5.4))(typescript@5.5.4):
+  ui@git+https://git@github.com:shadcn/ui.git#061083006f0122bfded841235ee58caefc9fd944(@types/node@20.16.3)(ts-node@10.9.2(@types/node@20.16.3)(typescript@5.5.4))(typescript@5.5.4):
     dependencies:
       '@babel/core': 7.25.2
       '@changesets/changelog-github': 0.4.8
