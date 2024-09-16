@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1725512383452,
+      "tag": "0000_hot_fenris",
+      "breakpoints": true
+    }
+  ]
+}
