@@ -3,8 +3,7 @@ import mysql from "mysql2/promise";
 import { migrate } from "drizzle-orm/mysql2/migrator";
 import { AppEnvs } from "./read-env";
 
-const databaseUrl =
-  "mysql://admin:20180523252veda@library-db-aws.c7y6ekcg0kcm.ap-southeast-2.rds.amazonaws.com:3306/library_db";
+const databaseUrl = process.env.DB_URL;
 
 export interface IDrizzleAdapter {
   getPoolDrizzle: () => MySql2Database;

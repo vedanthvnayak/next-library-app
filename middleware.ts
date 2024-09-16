@@ -13,14 +13,20 @@ export async function middleware(req: NextRequest) {
 
   if (pathname.startsWith("/admin")) {
     if (!token || !token.role) {
-      return NextResponse.redirect(new URL("/login", req.url));
+      return NextResponse.redirect(
+        new URL("https://next-library-app-weld.vercel.app/login", req.url)
+      );
     }
 
     if (token.role !== "admin") {
-      return NextResponse.redirect(new URL("/profile", req.url));
+      return NextResponse.redirect(
+        new URL("https://next-library-app-weld.vercel.app/profile", req.url)
+      );
     }
   } else if (token?.role === "admin") {
-    return NextResponse.redirect(new URL("/admin", req.url));
+    return NextResponse.redirect(
+      new URL("https://next-library-app-weld.vercel.app/admin", req.url)
+    );
   }
 
   return NextResponse.next();
