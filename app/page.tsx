@@ -10,7 +10,7 @@ const bookRepository = new BookRepository(db);
 
 // Dynamically import the HeroSection (client component)
 const HeroSection = dynamic(() => import("@/components/HeroSection"), {
-  ssr: false, // Ensure it's client-side only
+  ssr: true, // Ensure it's client-side only
 });
 
 export default async function HomePage() {

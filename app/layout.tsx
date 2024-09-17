@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/ui/Header";
+import Header from "@/components/ui/IslandHeader";
 import Footer from "@/components/ui/footer";
-import OpenAiChatBot from "@/components/ui/OpenAiChatBot"; // Import the component
+import OpenAiChatBot from "@/components/ui/OpenAiChatBot";
 import AuthProvider from "@/components/AuthProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -23,6 +24,7 @@ export default function RootLayout({
         <AuthProvider>
           <Header />
           <main>{children}</main>
+          <SpeedInsights />
           <Footer />
 
           <OpenAiChatBot />

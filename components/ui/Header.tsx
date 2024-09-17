@@ -13,7 +13,6 @@ import {
   Home,
   Info,
   ChevronDown,
-  Settings,
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
@@ -23,6 +22,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const isAdminPage = pathname.startsWith("/admin");
 
@@ -42,6 +42,13 @@ export default function Header() {
       ) {
         setIsProfileMenuOpen(false);
       }
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node) &&
+        !(event.target as HTMLElement).closest("button")
+      ) {
+        setIsMenuOpen(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -49,6 +56,7 @@ export default function Header() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
   return (
     <header className="sticky top-0 z-50 w-full bg-gray-800 bg-opacity-80 backdrop-blur-lg shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -85,7 +93,7 @@ export default function Header() {
                   />
                 </button>
                 {isProfileMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48  bg-gray-800 rounded-lg shadow-lg py-1 z-10">
+                  <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg py-1 z-10">
                     <Link
                       href="/profile"
                       className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors duration-200"
@@ -93,13 +101,6 @@ export default function Header() {
                       <User className="inline-block w-4 h-4 mr-2" />
                       View Profile
                     </Link>
-                    {/* <Link
-                      href="/settings"
-                      className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 transition-colors duration-200"
-                    >
-                      <Settings className="inline-block w-4 h-4 mr-2" />
-                      Settings
-                    </Link> */}
                     <hr className="my-1 border-gray-700" />
                     <button
                       onClick={() => signOut({ callbackUrl: "/" })}
@@ -145,6 +146,7 @@ export default function Header() {
         onClick={toggleMenu}
       />
       <div
+        ref={mobileMenuRef}
         className={`md:hidden fixed right-0 top-0 bottom-0 w-64 bg-gray-900 z-50 transform transition-transform duration-300 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
@@ -213,7 +215,6 @@ export default function Header() {
     </header>
   );
 }
-
 interface NavLinkProps {
   href: string;
   label: string;

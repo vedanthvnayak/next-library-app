@@ -1,12 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   ExclamationCircleIcon,
   FireIcon,
   BookOpenIcon,
 } from "@heroicons/react/24/solid";
-import Modal from "@/components/adminComponents/Modal"; // Import your existing Modal component
+import Modal from "@/components/adminComponents/Modal";
 import { requestBook } from "@/app/books/action";
 
 interface NotificationProps {
@@ -51,16 +51,22 @@ interface BookCardProps {
   };
   session: any;
 }
+
 const BookCard: React.FC<BookCardProps> = ({ book, session }) => {
   const [message, setMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Modal state
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const totalCopies = book.totalNumberOfCopies;
   const availableCopies = book.availableNumberOfCopies;
   const borrowedCopies = totalCopies - availableCopies;
   const isLowAvailability = availableCopies <= 2;
   const isHot = borrowedCopies >= 3;
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   const handleBorrowClick = async (id: number) => {
     try {
@@ -76,7 +82,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, session }) => {
       setMessage("Something went wrong");
       setIsSuccess(false);
     } finally {
-      setIsModalOpen(false); // Close modal after action
+      setIsModalOpen(false);
     }
   };
 
@@ -90,7 +96,11 @@ const BookCard: React.FC<BookCardProps> = ({ book, session }) => {
 
   return (
     <>
-      <div className="flex flex-col p-6 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-3xl min-h-[380px]">
+      <div
+        className={`flex flex-col p-6 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl shadow-2xl transition-all duration-500 transform hover:scale-105 hover:shadow-3xl min-h-[380px] ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        }`}
+      >
         <div className="flex flex-col flex-grow h-full">
           <div className="flex-grow flex flex-col justify-between mb-6">
             <div className="flex-grow">
@@ -116,7 +126,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, session }) => {
           <div className="mt-auto flex space-x-3">
             {session && session.user ? (
               <button
-                onClick={() => setIsModalOpen(true)} // Open modal on click
+                onClick={() => setIsModalOpen(true)}
                 className="flex-1 inline-flex items-center justify-center rounded-xl text-base font-medium bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 h-12"
               >
                 Borrow Now
@@ -132,7 +142,6 @@ const BookCard: React.FC<BookCardProps> = ({ book, session }) => {
         </div>
       </div>
 
-      {/* Modal for confirmation */}
       {isModalOpen && (
         <Modal
           isOpen={isModalOpen}
@@ -144,7 +153,6 @@ const BookCard: React.FC<BookCardProps> = ({ book, session }) => {
         />
       )}
 
-      {/* Notification */}
       {message && (
         <Notification
           message={message}

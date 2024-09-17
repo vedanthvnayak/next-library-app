@@ -158,6 +158,12 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
       case "genre-desc":
         orderByClause = sql`${booksTable.genre} DESC`;
         break;
+      case "id-asc":
+        orderByClause = sql`${booksTable.id} ASC`;
+        break;
+      case "id-desc":
+        orderByClause = sql`${booksTable.id} DESC`;
+        break;
 
       default:
         orderByClause = sql`${booksTable.title} ASC`; // Default sorting

@@ -1,9 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { PencilIcon, Trash2Icon, PlusCircleIcon } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import {
+  PencilIcon,
+  Trash2Icon,
+  PlusCircleIcon,
+  ChevronDown,
+} from "lucide-react";
 import { IBook } from "@/repository/models/books.model";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import EditBookForm from "@/components/adminComponents/EditBookForm";
 import Modal from "@/components/adminComponents/Modal";
 import {
@@ -19,13 +24,57 @@ interface BooksTableProps {
   books: IBook[];
 }
 
-export default function BooksTable({ books }: BooksTableProps) {
+type SortKey = keyof IBook;
+type SortOrder = "asc" | "desc";
+
+const SortArrow = ({ direction }: { direction: SortOrder }) => (
+  <svg
+    className={`ml-1 h-4 w-4 inline-block transition-transform duration-200 ease-in-out ${
+      direction === "asc" ? "transform rotate-180" : ""
+    }`}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+);
+
+export default function BooksTable({ books: initialBooks }: BooksTableProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBookId, setSelectedBookId] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editBookData, setEditBookData] = useState<IBook | null>(null);
+  const [books, setBooks] = useState(initialBooks);
 
-  const router = useRouter();
+  const defaultSort = searchParams.get("sort") || "title-asc";
+  const [field, setField] = useState<SortKey>(
+    (defaultSort.split("-")[0] as SortKey) || "title"
+  );
+  const [direction, setDirection] = useState<SortOrder>(
+    (defaultSort.split("-")[1] as SortOrder) || "asc"
+  );
+
+  useEffect(() => {
+    const sortedBooks = [...initialBooks].sort((a, b) => {
+      if (a[field] < b[field]) return direction === "asc" ? -1 : 1;
+      if (a[field] > b[field]) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+    setBooks(sortedBooks);
+  }, [initialBooks, field, direction]);
+
+  const handleSort = (key: SortKey) => {
+    const newDirection = field === key && direction === "asc" ? "desc" : "asc";
+    setField(key);
+    setDirection(newDirection);
+    router.replace(`?sort=${key}-${newDirection}`);
+  };
 
   const handleAddBookClick = () => {
     setIsEditing(true);
@@ -112,6 +161,32 @@ export default function BooksTable({ books }: BooksTableProps) {
     setEditBookData(null);
   };
 
+  const SortableHeader = ({
+    children,
+    sortKey,
+  }: {
+    children: React.ReactNode;
+    sortKey: SortKey;
+  }) => (
+    <th
+      className="px-2 py-2 sm:px-4 sm:py-3 font-semibold cursor-pointer group"
+      onClick={() => handleSort(sortKey)}
+    >
+      <div className="flex items-center justify-between">
+        <span>{children}</span>
+        <span
+          className={`transition-colors duration-200 ${
+            field === sortKey
+              ? "text-indigo-400"
+              : "text-gray-400 group-hover:text-gray-300"
+          }`}
+        >
+          <SortArrow direction={field === sortKey ? direction : "asc"} />
+        </span>
+      </div>
+    </th>
+  );
+
   return (
     <>
       <div className="mb-4 mt-4 flex justify-center">
@@ -122,32 +197,25 @@ export default function BooksTable({ books }: BooksTableProps) {
           <PlusCircleIcon className="h-5 w-5" />
           <span>Add Book</span>
         </button>
+        <div className="flex items-center space-x-4"></div>
       </div>
       <div className="overflow-x-auto bg-gray-900 rounded-lg shadow-xl">
         <table className="min-w-full text-xs sm:text-sm text-left text-gray-300">
           <thead className="bg-gray-800 text-gray-100">
             <tr>
-              <th className="px-2 py-2 sm:px-4 sm:py-3 font-semibold">ID</th>
-              <th className="px-2 py-2 sm:px-4 sm:py-3 font-semibold">Title</th>
-              <th className="px-2 py-2 sm:px-4 sm:py-3 font-semibold">
-                Author
-              </th>
-              <th className="px-2 py-2 sm:px-4 sm:py-3 font-semibold hidden sm:table-cell">
-                Publisher
-              </th>
-              <th className="px-2 py-2 sm:px-4 sm:py-3 font-semibold hidden md:table-cell">
-                Genre
-              </th>
-              <th className="px-2 py-2 sm:px-4 sm:py-3 font-semibold hidden lg:table-cell">
-                ISBN
-              </th>
-              <th className="px-2 py-2 sm:px-4 sm:py-3 font-semibold hidden xl:table-cell">
-                Pages
-              </th>
-              <th className="px-2 py-2 sm:px-4 sm:py-3 font-semibold">Total</th>
-              <th className="px-2 py-2 sm:px-4 sm:py-3 font-semibold">
+              <SortableHeader sortKey="id">ID</SortableHeader>
+              <SortableHeader sortKey="title">Title</SortableHeader>
+              <SortableHeader sortKey="author">Author</SortableHeader>
+              <SortableHeader sortKey="publisher">Publisher</SortableHeader>
+              <SortableHeader sortKey="genre">Genre</SortableHeader>
+              <SortableHeader sortKey="isbnNo">ISBN</SortableHeader>
+              <SortableHeader sortKey="numofPages">Pages</SortableHeader>
+              <SortableHeader sortKey="totalNumberOfCopies">
+                Total
+              </SortableHeader>
+              <SortableHeader sortKey="availableNumberOfCopies">
                 Available
-              </th>
+              </SortableHeader>
               <th className="px-2 py-2 sm:px-4 sm:py-3 font-semibold">
                 Actions
               </th>

@@ -54,7 +54,7 @@ export default async function BooksManagement({
               placeholder="Search books, authors, genres..."
               baseUrl="/admin/books"
             />
-            <SortDropdown defaultSort={sort} />
+            {/* <SortDropdown defaultSort={sort} /> */}
           </div>
 
           <div className="mt-4 flex w-full justify-center">
