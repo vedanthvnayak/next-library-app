@@ -1,18 +1,16 @@
 "use client";
-
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Library,
-  Book,
   LogOut,
-  Home,
-  Info,
   ChevronDown,
-  Search,
+  Home,
+  Book,
+  Info,
   User,
-} from "lucide-react";
+} from "lucide-react"; // Import icons
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -21,38 +19,37 @@ export default function Header() {
   const pathname = usePathname();
   const [isExpanded, setIsExpanded] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const collapseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const isAdminPage = pathname.startsWith("/admin");
 
+  // Reset expanded state when changing pages
   useEffect(() => {
     setIsExpanded(false);
   }, [pathname]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        headerRef.current &&
-        !headerRef.current.contains(event.target as Node)
-      ) {
-        setIsExpanded(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isExpanded && headerRef.current && dropdownRef.current) {
-      const islandWidth = headerRef.current.offsetWidth;
-      dropdownRef.current.style.width = `${islandWidth}px`;
+  // Handle mouse enter/leave for expansion and shrinking
+  const handleMouseEnter = () => {
+    if (collapseTimeoutRef.current) {
+      clearTimeout(collapseTimeoutRef.current);
     }
-  }, [isExpanded]);
+    setIsExpanded(true);
+  };
 
-  const toggleExpanded = () => setIsExpanded(!isExpanded);
+  const handleMouseLeave = () => {
+    collapseTimeoutRef.current = setTimeout(() => {
+      setIsExpanded(false);
+    }, 500);
+  };
+
+  const handleLinkClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+  };
+
+  const toggleExpanded = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    setIsExpanded(!isExpanded);
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
@@ -66,9 +63,10 @@ export default function Header() {
           }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className="bg-gray-900 rounded-full shadow-lg border border-gray-600 mx-auto mt-4"
-          onMouseEnter={() => setIsExpanded(true)}
-          onMouseLeave={() => setIsExpanded(false)}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
           aria-expanded={isExpanded}
+          ref={headerRef}
         >
           <div className="h-full px-6 flex items-center justify-between overflow-hidden">
             <AnimatePresence initial={false}>
@@ -80,22 +78,44 @@ export default function Header() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                   className="w-full flex items-center justify-between"
+                  onClick={handleLinkClick}
                 >
+                  {/* Logo and Text with min-width */}
                   <Link href="/" className="flex items-center flex-shrink-0">
-                    <Library className="h-6 w-6 text-gray-100 mr-2" />
-                    <span className="text-base font-bold text-gray-100 whitespace-nowrap">
-                      ज्ञान भाण्डार Library
-                    </span>
+                    <div className="flex items-center min-w-[150px]">
+                      <Library className="h-6 w-6 text-gray-100 mr-2" />
+                      <span className="text-base font-bold text-gray-100 whitespace-nowrap">
+                        ज्ञान भाण्डार Library
+                      </span>
+                    </div>
                   </Link>
+
+                  {/* Navigation */}
                   <nav className="flex items-center space-x-4 ml-auto">
-                    <NavLink href="/" label="Discover" />
-                    <NavLink href="/books" label="Books" />
-                    <NavLink href="/about" label="About" />
+                    <NavLink
+                      href="/"
+                      label="Discover"
+                      icon={<Home className="h-4 w-4" />}
+                      onClick={handleLinkClick}
+                    />
+                    <NavLink
+                      href="/books"
+                      label="Books"
+                      icon={<Book className="h-4 w-4" />}
+                      onClick={handleLinkClick}
+                    />
+                    <NavLink
+                      href="/about"
+                      label="About"
+                      icon={<Info className="h-4 w-4" />}
+                      onClick={handleLinkClick}
+                    />
                     {session ? (
                       <>
                         <Link
                           href="/profile"
                           className="flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-full text-sm font-medium transition-colors duration-300"
+                          onClick={handleLinkClick}
                         >
                           <img
                             src={session.user.image || "/default-profile.png"}
@@ -115,7 +135,11 @@ export default function Header() {
                         </button>
                       </>
                     ) : (
-                      <NavLink href="/login" label="Sign In" />
+                      <NavLink
+                        href="/login"
+                        label="Sign In"
+                        onClick={handleLinkClick}
+                      />
                     )}
                   </nav>
                 </motion.div>
@@ -145,108 +169,33 @@ export default function Header() {
       </div>
 
       {/* Mobile Header */}
-      <div className="md:hidden">
-        <div className="relative" ref={headerRef}>
-          <motion.div
-            initial={false}
-            animate={{
-              width: isExpanded ? "100%" : "90%",
-              height: "48px",
-            }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="bg-gray-900 bg-opacity-80 backdrop-blur-lg rounded-full shadow-lg mx-auto mt-4 overflow-hidden"
-            onClick={toggleExpanded}
-          >
-            <div className="h-full px-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <Library className="h-5 w-5 text-gray-100 mr-2" />
-                <span className="text-sm font-bold text-gray-100">
-                  ज्ञान भाण्डार
-                </span>
-              </div>
-              <ChevronDown className="h-5 w-5 text-gray-300" />
+      <div className="md:hidden relative" ref={headerRef}>
+        <motion.div
+          initial={false}
+          animate={{
+            width: isExpanded ? "100%" : "90%",
+            height: "48px",
+          }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="bg-gray-900 bg-opacity-80 backdrop-blur-lg rounded-full shadow-lg mx-auto mt-4 overflow-hidden"
+          onClick={toggleExpanded}
+        >
+          <div className="h-full px-4 flex items-center justify-between">
+            <div className="flex items-center">
+              <Library className="h-5 w-5 text-gray-100 mr-2" />
+              <span className="text-sm font-bold text-gray-100">
+                ज्ञान भाण्डार
+              </span>
             </div>
-          </motion.div>
+            <ChevronDown className="h-5 w-5 text-gray-300" />
+          </div>
+        </motion.div>
 
-          <AnimatePresence>
-            {isExpanded && (
-              <motion.div
-                ref={dropdownRef}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute top-full left-1/2 transform -translate-x-1/2 max-w-md bg-gray-900 bg-opacity-95 backdrop-blur-lg rounded-2xl shadow-lg p-4 space-y-4 mt-2"
-              >
-                <nav className="space-y-2">
-                  <NavLink
-                    href="/"
-                    label="Discover"
-                    icon={<Home className="h-5 w-5" />}
-                  />
-                  {!isAdminPage && (
-                    <NavLink
-                      href="/books"
-                      label="Books"
-                      icon={<Book className="h-5 w-5" />}
-                    />
-                  )}
-                  <NavLink
-                    href="/about"
-                    label="About"
-                    icon={<Info className="h-5 w-5" />}
-                  />
-                </nav>
-                <div className="pt-2 border-t border-gray-700">
-                  {session ? (
-                    <>
-                      <Link
-                        href="/profile"
-                        className="flex items-center space-x-3 text-gray-300 hover:text-white mb-2"
-                      >
-                        <img
-                          src={session.user?.image || "/default-profile.png"}
-                          alt="Profile"
-                          className="h-8 w-8 rounded-full border border-gray-600"
-                        />
-                        <span className="font-medium">
-                          {session.user?.name}
-                        </span>
-                      </Link>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          signOut({ callbackUrl: "/" });
-                        }}
-                        className="w-full flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        <span>Sign Out</span>
-                      </button>
-                    </>
-                  ) : (
-                    <NavLink
-                      href="/login"
-                      label="Sign In"
-                      icon={<User className="h-5 w-5" />}
-                      className="w-full bg-blue-600 hover:bg-blue-700 justify-center"
-                    />
-                  )}
-                </div>
-                <div className="pt-2 border-t border-gray-700">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Find your next read..."
-                      className="w-full bg-gray-800 text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        <AnimatePresence>
+          {isExpanded && (
+            <MobileDropdown session={session} isAdminPage={isAdminPage} />
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );
@@ -257,14 +206,63 @@ interface NavLinkProps {
   label: string;
   icon?: React.ReactNode;
   className?: string;
+  onClick?: (event: React.MouseEvent) => void;
 }
 
-const NavLink = ({ href, label, icon, className }: NavLinkProps) => (
+const NavLink = ({ href, label, icon, className, onClick }: NavLinkProps) => (
   <Link
     href={href}
-    className={`flex items-center space-x-2 text-gray-300 hover:text-white px-3 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${className}`}
+    className={`flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${className}`}
+    onClick={onClick}
   >
     {icon && icon}
     <span>{label}</span>
   </Link>
 );
+
+interface MobileDropdownProps {
+  session: any;
+  isAdminPage: boolean;
+}
+
+const MobileDropdown = ({ session, isAdminPage }: MobileDropdownProps) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      transition={{ duration: 0.2 }}
+      className="bg-gray-900 bg-opacity-95 backdrop-blur-lg rounded-2xl shadow-lg space-y-4 absolute top-[60px] left-0 right-0 py-4 px-4"
+    >
+      <NavLink href="/" label="Discover" icon={<Home className="h-4 w-4" />} />
+      <NavLink
+        href="/books"
+        label="Books"
+        icon={<Book className="h-4 w-4" />}
+      />
+      <NavLink
+        href="/about"
+        label="About"
+        icon={<Info className="h-4 w-4" />}
+      />
+      {session ? (
+        <>
+          <NavLink
+            href="/profile"
+            label="Profile"
+            icon={<User className="h-4 w-4" />}
+          />
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="w-full text-left flex items-center space-x-2 text-red-400 hover:bg-gray-700 px-3 py-2 rounded-full text-sm font-medium transition-colors duration-300"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Sign Out</span>
+          </button>
+        </>
+      ) : (
+        <NavLink href="/login" label="Sign In" />
+      )}
+    </motion.div>
+  );
+};
