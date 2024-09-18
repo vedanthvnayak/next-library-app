@@ -5,7 +5,7 @@ import { authOptions } from "@/utils/authOptions";
 import { User, BookOpen, Settings, LogIn } from "lucide-react";
 import Link from "next/link";
 import { getUserInfo } from "../admin/users/action";
-
+//updated to vercel
 async function getUserProfile(userId: number): Promise<any> {
   const session = await getServerSession(authOptions);
   const userInDb = await getUserInfo(userId);
