@@ -1,62 +1,57 @@
-import { IBook } from "@/repository/models/books.model";
-import { sql } from "drizzle-orm";
 import {
-  date,
-  int,
-  mysqlTable,
-  serial,
-  varchar,
+  pgTable,
+  foreignKey,
+  bigserial,
+  integer,
   text,
   timestamp,
-  unique,
-  bigint,
-  tinyint,
-  mysqlEnum,
-} from "drizzle-orm/mysql-core";
+  serial,
+  varchar,
+} from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
-// Books Table
-export const booksTable = mysqlTable("books", {
-  id: serial("id").primaryKey().notNull(),
+export const refreshTokens = pgTable("refresh_tokens", {
+  id: bigserial("id", { mode: "bigint" }).primaryKey().notNull(),
+  userid: integer("userid")
+    .notNull()
+    .references(() => users.userid),
+  token: text("token").notNull(),
+  issuedat: timestamp("issuedat", { mode: "string" }).defaultNow().notNull(),
+  expiresat: timestamp("expiresat", { mode: "string" }).notNull(),
+  ip: text("ip"),
+});
+
+export const users = pgTable("users", {
+  userid: serial("userid").primaryKey().notNull(),
+  username: varchar("username", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  password: varchar("password", { length: 255 }).notNull(),
+  role: varchar("role", { length: 255 }).notNull(),
+  profileimage: varchar("profileimage", { length: 2048 }).notNull(),
+});
+
+export const transactions = pgTable("transactions", {
+  transactionid: serial("transactionid").primaryKey().notNull(),
+  userid: integer("userid")
+    .notNull()
+    .references(() => users.userid),
+  bookid: integer("bookid")
+    .notNull()
+    .references(() => books.id),
+  issueddate: timestamp("issueddate", { mode: "string" })
+    .defaultNow()
+    .notNull(),
+  status: varchar("status", { length: 100 }).notNull(),
+});
+
+export const books = pgTable("books", {
+  id: bigserial("id", { mode: "bigint" }).primaryKey().notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   author: varchar("author", { length: 255 }).notNull(),
   publisher: varchar("publisher", { length: 255 }),
   genre: varchar("genre", { length: 100 }),
   isbnNo: varchar("isbnNo", { length: 20 }),
-  numofPages: int("numofPages").notNull(),
-  totalNumberOfCopies: int("totalNumberOfCopies").notNull(),
-  availableNumberOfCopies: int("availableNumberOfCopies").notNull(),
-});
-
-// Users Table
-export const usersTable = mysqlTable("users", {
-  userId: int("userId").primaryKey().autoincrement(),
-  username: varchar("username", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull(),
-  passwordHash: varchar("password", { length: 255 }).notNull(),
-  role: varchar("role", { length: 255 }).notNull(),
-});
-
-// Transactions Table
-export const transactionsTable = mysqlTable("transactions", {
-  transactionId: serial("transactionId").primaryKey().notNull(),
-  userId: int("userId")
-    .notNull()
-    .references(() => usersTable.userId),
-  bookId: int("bookId")
-    .notNull()
-    .references(() => booksTable.id),
-  issuedDate: timestamp("issuedDate").defaultNow().notNull(),
-  status: varchar("status", { length: 100 }).notNull(),
-});
-
-// Refresh Tokens Table
-export const refreshTokensTable = mysqlTable("refresh_tokens", {
-  id: serial("id").primaryKey().notNull(),
-  userId: int("userId")
-    .notNull()
-    .references(() => usersTable.userId),
-  token: text("token").notNull(),
-  issuedAt: timestamp("issuedAt").defaultNow().notNull(),
-  expiresAt: timestamp("expiresAt").notNull(),
-  ip: text("ip"),
+  numofPages: integer("numofPages").notNull(),
+  totalNumberOfCopies: integer("totalNumberOfCopies").notNull(),
+  availableNumberOfCopies: integer("availableNumberOfCopies").notNull(),
 });

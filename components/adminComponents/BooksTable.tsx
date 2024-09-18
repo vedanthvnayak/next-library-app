@@ -117,7 +117,7 @@ export default function BooksTable({ books: initialBooks }: BooksTableProps) {
         const result = await deleteBook(selectedBookId);
 
         if (result.success) {
-          toast.error("Book deleted successfully.");
+          toast.success("Book deleted successfully.");
           router.refresh();
         } else {
           throw new Error(result.error || "Failed to delete book.");

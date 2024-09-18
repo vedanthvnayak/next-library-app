@@ -18,7 +18,7 @@ export default function EditUserForm({
 }: EditUserFormProps) {
   const [userData, setUserData] = React.useState<IUser>(user);
   const [passwordHash, setPasswordHash] = React.useState<string>(
-    user.passwordHash || ""
+    user.password || ""
   );
   const [password, setPassword] = React.useState<string>("");
 
@@ -41,7 +41,7 @@ export default function EditUserForm({
 
     const updatedUserData = {
       ...userData,
-      passwordHash: password ? password : passwordHash,
+      password: password ? password : passwordHash,
     };
     onSave(updatedUserData);
   };

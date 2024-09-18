@@ -95,19 +95,16 @@ export default function Header() {
                     <NavLink
                       href="/"
                       label="Discover"
-                      icon={<Home className="h-4 w-4" />}
                       onClick={handleLinkClick}
                     />
                     <NavLink
                       href="/books"
                       label="Books"
-                      icon={<Book className="h-4 w-4" />}
                       onClick={handleLinkClick}
                     />
                     <NavLink
                       href="/about"
                       label="About"
-                      icon={<Info className="h-4 w-4" />}
                       onClick={handleLinkClick}
                     />
                     {session ? (

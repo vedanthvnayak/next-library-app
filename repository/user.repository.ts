@@ -2,10 +2,11 @@ import bcrypt from "bcrypt";
 import { IRepository } from "@/repository/models/repository";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { and, eq, like, sql } from "drizzle-orm";
-import { usersTable } from "@/db/drizzle/schema";
+import { users as usersTable } from "@/db/drizzle/schema";
 import { IUserBase, IUser } from "@/repository/models/user.model";
 import { IPagedResponse, IPageRequest } from "./models/pagination.model";
-
+import { db } from "@/db/db";
+import { profile } from "console";
 export class UserRepository implements IRepository<IUserBase, IUser> {
   constructor(private readonly db: MySql2Database<Record<string, unknown>>) {}
 
@@ -15,36 +16,41 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
    * @returns {Promise<IUser>} The created user with assigned ID.
    */
   async create(data: IUserBase): Promise<IUser> {
-    // Hash the password
+    console.log(data);
     const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(data.passwordHash, saltRounds);
 
-    // Prepare user data with hashed password
+    // Ensure you're hashing the plain password, not an already hashed one
+    if (!data.password) {
+      throw new Error("Password is required for user creation");
+    }
+
+    // Hash the plain text password
+    const passwordHash = await bcrypt.hash(data.password, saltRounds);
+
+    // Prepare the user data with the hashed password
     const user = {
       username: data.username,
       email: data.email,
-      passwordHash,
+      password: passwordHash,
       role: data.role,
+      profileimage: data.profileimage || "", // Default to empty string if not provided
     };
 
     try {
-      const [insertedUserId] = await this.db
+      // Insert the user and return the inserted row
+      const [insertedUser] = await db
         .insert(usersTable)
         .values(user)
-        .$returningId();
+        .returning({
+          userid: usersTable.userid,
+          username: usersTable.username,
+          email: usersTable.email,
+          role: usersTable.role,
+          profileimage: usersTable.profileimage,
+        });
 
-      if (insertedUserId) {
-        const insertedUser = await this.db
-          .select()
-          .from(usersTable)
-          .where(eq(usersTable.userId, insertedUserId.userId))
-          .execute();
-
-        if (insertedUser.length > 0) {
-          return insertedUser[0] as IUser;
-        } else {
-          throw new Error("Failed to retrieve the inserted user.");
-        }
+      if (insertedUser) {
+        return insertedUser as IUser;
       } else {
         throw new Error("Failed to insert user.");
       }
@@ -61,22 +67,32 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
    * @returns {Promise<IUser | null>} The updated user or null if the user was not found.
    */
   async update(id: number, data: IUser): Promise<IUser | null> {
-    const saltRounds = 10;
-    data.passwordHash = await bcrypt.hash(data.passwordHash, saltRounds);
     try {
-      const [result] = await this.db
+      // Hash the password before updating
+      const saltRounds = 10;
+      const passwordHash = await bcrypt.hash(data.password, saltRounds);
+
+      // Prepare the updated user data with hashed password
+      const updatedData = {
+        ...data,
+        password: passwordHash, // Update password with hashed version
+      };
+
+      // Perform the update query and return the updated user
+      const [updatedUser] = await db
         .update(usersTable)
-        .set(data)
-        .where(eq(usersTable.userId, id))
-        .execute();
+        .set(updatedData)
+        .where(eq(usersTable.userid, id))
+        .returning({
+          userid: usersTable.userid,
+          username: usersTable.username,
+          email: usersTable.email,
+          role: usersTable.role,
+          profileimage: usersTable.profileimage,
+        });
 
-      if (result.affectedRows > 0) {
-        const [updatedUser] = await this.db
-          .select()
-          .from(usersTable)
-          .where(eq(usersTable.userId, id))
-          .execute();
-
+      // Check if update was successful and return the updated user
+      if (updatedUser) {
         return updatedUser as IUser;
       } else {
         console.log("Unable to update the user: User not found.");
@@ -84,7 +100,7 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
       }
     } catch (err) {
       console.error("Error updating user:", err);
-      throw err;
+      throw new Error("User update failed.");
     }
   }
 
@@ -95,17 +111,14 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
    */
   async delete(id: number): Promise<IUser | null> {
     try {
-      const [deletingUser] = await this.db
+      const [deletingUser] = await db
         .select()
         .from(usersTable)
-        .where(eq(usersTable.userId, id))
+        .where(eq(usersTable.userid, id))
         .execute();
 
       if (deletingUser) {
-        await this.db
-          .delete(usersTable)
-          .where(eq(usersTable.userId, id))
-          .execute();
+        await db.delete(usersTable).where(eq(usersTable.userid, id)).execute();
         return deletingUser as IUser;
       } else {
         console.log("User does not exist.");
@@ -124,10 +137,10 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
    */
   async getById(id: number): Promise<IUser | null> {
     try {
-      const [user] = await this.db
+      const [user] = await db
         .select()
         .from(usersTable)
-        .where(eq(usersTable.userId, id))
+        .where(eq(usersTable.userid, id))
         .execute();
 
       return user as IUser;
@@ -152,7 +165,7 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
     // Construct the search WHERE clause
     if (params.search) {
       const search = `%${params.search.toLowerCase()}%`;
-      searchWhereClause = sql`${usersTable.username} LIKE ${search} OR ${usersTable.email} LIKE ${search} OR ${usersTable.userId} LIKE ${search}`;
+      searchWhereClause = sql`${usersTable.username} LIKE ${search} OR ${usersTable.email} LIKE ${search} OR ${usersTable.userid} LIKE ${search}`;
     }
 
     // Determine the ORDER BY clause based on the sort parameter
@@ -170,10 +183,10 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
         orderByClause = sql`${usersTable.email} DESC`;
         break;
       case "id-asc":
-        orderByClause = sql`${usersTable.userId} ASC`;
+        orderByClause = sql`${usersTable.userid} ASC`;
         break;
       case "id-desc":
-        orderByClause = sql`${usersTable.userId} DESC`;
+        orderByClause = sql`${usersTable.userid} DESC`;
         break;
       case "role-asc":
         orderByClause = sql`${usersTable.role} ASC`;
@@ -186,7 +199,7 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
     }
 
     // Fetch items with search and sorting
-    const items: IUser[] = (await this.db
+    const items: IUser[] = (await db
       .select()
       .from(usersTable)
       .where(searchWhereClause)
@@ -195,7 +208,7 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
       .limit(params.limit)) as IUser[];
 
     // Count total items matching the search criteria
-    const [{ count: total }] = await this.db
+    const [{ count: total }] = await db
       .select({ count: sql<number>`count(*)` })
       .from(usersTable)
       .where(searchWhereClause);
@@ -212,7 +225,7 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
 
   async findByEmail(email: string) {
     try {
-      const [user] = await this.db
+      const [user] = await db
         .select()
         .from(usersTable)
         .where(eq(usersTable.email, email))
@@ -225,7 +238,7 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
 
   async getTotalUserCount(): Promise<number> {
     try {
-      const result = await (await this.db)
+      const result = await (await db)
         .select({ count: sql`COUNT(*)` })
         .from(usersTable);
       return result[0].count as number;
@@ -238,41 +251,42 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
     newUsername: string
   ): Promise<IUser | null> {
     try {
-      // Find the user by email
-      const [user] = await this.db
+      // Check if the user exists by email
+      const [existingUser] = await db
         .select()
         .from(usersTable)
         .where(eq(usersTable.email, email))
         .execute();
 
-      if (!user) {
+      if (!existingUser) {
         console.log("User not found with the provided email.");
         return null;
       }
 
-      // Update the username
-      const [result] = await this.db
+      // Update the username and return the updated user data
+      const [updatedUser] = await db
         .update(usersTable)
         .set({ username: newUsername })
         .where(eq(usersTable.email, email))
-        .execute();
+        .returning({
+          userid: usersTable.userid,
+          username: usersTable.username,
+          email: usersTable.email,
+          role: usersTable.role,
+          profileimage: usersTable.profileimage,
+        });
 
-      if (result.affectedRows > 0) {
-        // Fetch the updated user
-        const [updatedUser] = await this.db
-          .select()
-          .from(usersTable)
-          .where(eq(usersTable.email, email))
-          .execute();
-
-        return updatedUser as IUser;
-      } else {
+      // Ensure the update was successful
+      if (!updatedUser) {
         console.log("Unable to update the username.");
         return null;
       }
+
+      // Return the updated user as IUser
+      return updatedUser as IUser;
     } catch (err) {
       console.error("Error updating username:", err);
-      throw err;
+      throw new Error("Failed to update the username.");
     }
   }
 }

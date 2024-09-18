@@ -1,10 +1,11 @@
 export interface IUserBase {
   username: string;
   email: string;
-  passwordHash: string;
+  password: string;
   role: string;
+  profileimage?: string;
 }
 
 export interface IUser extends IUserBase {
-  userId: number;
+  userid: number;
 }

@@ -1,13 +1,10 @@
 import { defineConfig } from "drizzle-kit";
-import { AppEnvs } from "@/db/read-env";
 
 export default defineConfig({
   schema: "./db/drizzle",
   out: "./db/drizzle/migration",
-  dialect: "mysql",
+  dialect: "postgresql",
   dbCredentials: {
-    url: AppEnvs.DATABASE_URL as string,
+    url: process.env.POSTGRES_URL,
   },
-  verbose: true,
-  strict: true,
 });

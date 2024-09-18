@@ -30,10 +30,10 @@ export default function UsersTable({ users }: UserTableProps) {
   const handleAddUserClick = () => {
     setIsEditing(true);
     setEditUserData({
-      userId: 0,
+      userid: 0,
       username: "",
       email: "",
-      passwordHash: "",
+      password: "",
       role: "user",
     });
   };
@@ -80,7 +80,7 @@ export default function UsersTable({ users }: UserTableProps) {
   const handleSaveChanges = async (updatedUserData: IUser) => {
     try {
       let result;
-      if (editUserData?.userId === 0) {
+      if (editUserData?.userid === 0) {
         result = await addUser(updatedUserData);
         toast.success("User added successfully.");
       } else {
@@ -134,10 +134,10 @@ export default function UsersTable({ users }: UserTableProps) {
           <tbody className="divide-y divide-gray-700">
             {users.map((user) => (
               <tr
-                key={user.userId}
+                key={user.userid}
                 className="hover:bg-gray-800 transition-colors duration-200"
               >
-                <td className="px-2 py-2 sm:px-4 sm:py-3">{user.userId}</td>
+                <td className="px-2 py-2 sm:px-4 sm:py-3">{user.userid}</td>
                 <td className="px-2 py-2 sm:px-4 sm:py-3">{user.username}</td>
                 <td className="px-2 py-2 sm:px-4 sm:py-3">{user.email}</td>
                 <td className="px-2 py-2 sm:px-4 sm:py-3 hidden md:table-cell">
@@ -147,14 +147,14 @@ export default function UsersTable({ users }: UserTableProps) {
                   <div className="flex items-center space-x-3">
                     <button
                       className="text-indigo-400 hover:text-indigo-300 transition-colors duration-200 bg-indigo-900 bg-opacity-30 hover:bg-opacity-50 rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-                      onClick={() => handleEditClick(user.userId)}
+                      onClick={() => handleEditClick(user.userid)}
                       aria-label={`Edit ${user.username}`}
                     >
                       <PencilIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
                     <button
                       className="text-red-400 hover:text-red-300 transition-colors duration-200 bg-red-900 bg-opacity-30 hover:bg-opacity-50 rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-                      onClick={() => handleDeleteClick(user.userId)}
+                      onClick={() => handleDeleteClick(user.userid)}
                       aria-label={`Delete ${user.username}`}
                     >
                       <Trash2Icon className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -172,7 +172,7 @@ export default function UsersTable({ users }: UserTableProps) {
           user={editUserData}
           onSave={handleSaveChanges}
           onCancel={handleCancelEdit}
-          isNewUser={editUserData.userId === 0}
+          isNewUser={editUserData.userid === 0}
         />
       )}
 

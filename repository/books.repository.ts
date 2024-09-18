@@ -1,10 +1,10 @@
 import { IPageRequest, IPagedResponse } from "./models/pagination.model";
 import { IRepository } from "./models/repository";
 import { IBookBase, IBook } from "./models/books.model";
-import { booksTable } from "../db/drizzle/schema";
+import { books as booksTable } from "../db/drizzle/schema";
 import { and, eq, ilike, like, sql } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
-
+import { db } from "@/db/db";
 export class BookRepository implements IRepository<IBookBase, IBook> {
   constructor(private readonly db: MySql2Database<Record<string, unknown>>) {}
 
@@ -15,28 +15,33 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
    */
   async create(data: IBookBase): Promise<IBook> {
     const book = {
-      // TODO: Implement validation
-      ...data,
-      id: 0,
+      title: data.title,
+      author: data.author,
+      numofPages: data.numofPages,
+      publisher: data.publisher,
+      genre: data.genre,
+      isbnNo: data.isbnNo,
+      totalNumberOfCopies: data.totalNumberOfCopies,
       availableNumberOfCopies: data.totalNumberOfCopies,
     };
+
     try {
-      const [result] = await this.db
+      const [result] = await db
         .insert(booksTable)
         .values(book)
-        .$returningId();
-      // const insertedBookId = result.insertId;
+        .returning({ id: booksTable.id });
 
       const insertedBookId = result.id;
       if (insertedBookId) {
-        const [insertedBook] = await this.db
+        const [insertedBook] = await db
           .select()
           .from(booksTable)
           .where(eq(booksTable.id, insertedBookId));
-        return insertedBook as IBook;
+
+        return insertedBook as unknown as IBook;
       } else {
-        console.error("Inserted But ID not matching");
-        return book;
+        console.error("Inserted but ID not matching");
+        return { ...book, id: 0 } as IBook;
       }
     } catch (err) {
       throw err;
@@ -52,24 +57,29 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
   async update(id: number, data: IBook): Promise<IBook | null> {
     try {
       // Perform the update operation
-      const result = await (
-        await this.db
-      )
+      const result = await db
         .update(booksTable)
         .set(data)
-        .where(sql`${booksTable.id} = ${id}`)
-        .execute();
+        .where(eq(booksTable.id, BigInt(id))) // Convert `id` to `BigInt`
+        .returning(); // Optional: Add returning clause if needed
 
       if (result) {
-        const [updatedBook] = await (
-          await this.db
-        )
+        // Fetch the updated book after the update
+        const [updatedBook] = await db
           .select()
           .from(booksTable)
-          .where(sql`${booksTable.id} = ${id}`)
-          .execute();
+          .where(eq(booksTable.id, BigInt(id))); // Convert `id` to `BigInt`
 
-        return updatedBook as IBook;
+        if (updatedBook) {
+          // Convert `bigint` id to number and return as IBook
+          return {
+            ...updatedBook,
+            id: Number(updatedBook.id),
+          } as IBook;
+        } else {
+          console.log("Book not found after update");
+          return null;
+        }
       } else {
         console.log("Unable to update the book");
         return null;
@@ -87,26 +97,35 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
    */
   async delete(id: number): Promise<IBook | null> {
     try {
-      const [deletingBook] = await (await this.db)
+      // Fetch the book to be deleted
+      const [deletingBook] = await db
         .select()
         .from(booksTable)
-        .where(eq(booksTable.id, id));
+        .where(eq(booksTable.id, BigInt(id))); // Convert `id` to `BigInt`
+
       if (deletingBook) {
-        const [result] = await (await this.db)
+        // Delete the book
+        const result = await db
           .delete(booksTable)
-          .where(eq(booksTable.id, id));
+          .where(eq(booksTable.id, BigInt(id))); // Convert `id` to `BigInt`
+
+        // Check if the deletion was successful
         if (result) {
-          return deletingBook as IBook;
+          // Convert the `bigint` id to `number` when returning the book as IBook
+          return {
+            ...deletingBook,
+            id: Number(deletingBook.id), // Convert id to number
+          } as IBook;
         } else {
-          console.error("deleting unsuccessful");
+          console.error("Deleting unsuccessful");
           return null;
         }
       } else {
-        console.error("book does not exist");
+        console.error("Book does not exist");
         return null;
       }
     } catch (err) {
-      throw new Error("deletion failed");
+      console.error("Deletion failed", err);
       return null;
     }
   }
@@ -118,13 +137,24 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
    */
   async getById(id: number): Promise<IBook | null> {
     try {
-      const [insertedBook] = await (await this.db)
+      // Fetch the book by id
+      const [fetchedBook] = await db
         .select()
         .from(booksTable)
-        .where(eq(booksTable.id, id));
-      return insertedBook as IBook;
+        .where(eq(booksTable.id, BigInt(id))); // Convert `id` to `BigInt`
+
+      if (fetchedBook) {
+        // Convert `bigint` id to `number` and return the book as IBook
+        return {
+          ...fetchedBook,
+          id: Number(fetchedBook.id), // Convert id to number
+        } as IBook;
+      } else {
+        return null; // Book not found
+      }
     } catch (err) {
-      throw err;
+      console.error("Error fetching book by ID", err);
+      return null;
     }
   }
 
@@ -164,28 +194,33 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
       case "id-desc":
         orderByClause = sql`${booksTable.id} DESC`;
         break;
-
       default:
         orderByClause = sql`${booksTable.title} ASC`; // Default sorting
     }
 
     // Fetch items with search and sorting
-    const items: IBook[] = (await this.db
+    const items = await db
       .select()
       .from(booksTable)
       .where(searchWhereClause)
       .orderBy(orderByClause)
       .offset(params.offset)
-      .limit(params.limit)) as IBook[];
+      .limit(params.limit);
+
+    // Convert the items to IBook[] with id as number
+    const convertedItems = items.map((item) => ({
+      ...item,
+      id: Number(item.id), // Convert bigint id to number
+    })) as IBook[];
 
     // Count total items matching the search criteria
-    const [{ count: total }] = await this.db
+    const [{ count: total }] = await db
       .select({ count: sql<number>`count(*)` })
       .from(booksTable)
       .where(searchWhereClause);
 
     return {
-      items,
+      items: convertedItems,
       pagination: {
         offset: params.offset,
         limit: params.limit,
@@ -196,16 +231,20 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
 
   async searchByKeyword(keyword: string): Promise<IBook[]> {
     try {
-      const results = await (
-        await this.db
-      )
+      const results = await db
         .select()
         .from(booksTable)
         .where(like(booksTable.title, `%${keyword}%`)) // Use 'like' for case-insensitive search
         .limit(100)
         .execute();
 
-      return results as IBook[];
+      // Convert the results to IBook[] with id as number
+      const convertedResults = results.map((item) => ({
+        ...item,
+        id: Number(item.id), // Convert bigint id to number
+      })) as IBook[];
+
+      return convertedResults;
     } catch (err) {
       console.error("Error searching books:", err);
       throw err;
@@ -214,19 +253,25 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
 
   async getTopFourBook(): Promise<IBook[]> {
     try {
-      const results = await this.db.select().from(booksTable).limit(4);
+      // Fetch the top 4 books
+      const results = await db.select().from(booksTable).limit(4).execute();
 
-      return results as IBook[];
+      // Convert the results to IBook[] with id as number
+      const convertedResults: IBook[] = results.map((item) => ({
+        ...item,
+        id: Number(item.id), // Convert bigint id to number
+      }));
+
+      return convertedResults;
     } catch (err) {
-      console.error("Error searching books:", err);
+      console.error("Error fetching top four books:", err);
       throw err;
     }
   }
+
   async getTotalBookCount(): Promise<number> {
     try {
-      const result = await this.db
-        .select({ count: sql`COUNT(*)` })
-        .from(booksTable);
+      const result = await db.select({ count: sql`COUNT(*)` }).from(booksTable);
       return result[0].count as number;
     } catch (err) {
       throw err;
@@ -234,37 +279,34 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
   }
   async updateAvailableNumberOfCopies(id: number, difference: number) {
     try {
+      // Convert id to bigint for the query
+      const bigintId = BigInt(id);
+
       // Fetch the current value of availableNumberOfCopies
-      const currentBook = await this.db
+      const currentBook = await db
         .select({ availableNumberOfCopies: booksTable.availableNumberOfCopies })
         .from(booksTable)
-        .where(eq(booksTable.id, id))
+        .where(eq(booksTable.id, bigintId))
         .execute();
 
       if (currentBook.length === 0) {
         throw new Error("Book not found");
       }
 
-      const currentAvailableCopies = currentBook[0].availableNumberOfCopies;
+      const currentAvailableNumberOfCopies =
+        currentBook[0].availableNumberOfCopies;
 
-      // Update the availableNumberOfCopies with the given difference
-      const newAvailableCopies = currentAvailableCopies + difference;
-
-      await this.db
+      // Update availableNumberOfCopies
+      await db
         .update(booksTable)
-        .set({ availableNumberOfCopies: newAvailableCopies })
-        .where(eq(booksTable.id, id))
+        .set({
+          availableNumberOfCopies: currentAvailableNumberOfCopies + difference,
+        })
+        .where(eq(booksTable.id, bigintId))
         .execute();
-
-      return {
-        success: true,
-        message: "Available number of copies updated successfully.",
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Failed to update available number of copies: ${error.message}`,
-      };
+    } catch (err) {
+      console.error("Error updating available number of copies:", err);
+      throw err;
     }
   }
 }

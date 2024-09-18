@@ -67,8 +67,8 @@ export default function AuthForm({
     await addUser({
       username,
       email,
-      passwordHash,
-      userId: 0,
+      password: passwordHash,
+      userid: 0,
       role: "user",
     });
 

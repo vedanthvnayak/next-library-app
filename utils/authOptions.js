@@ -40,16 +40,13 @@ export const authOptions = {
             return null;
           }
 
-          const isPasswordValid = await bcrypt.compare(
-            password,
-            user.passwordHash
-          );
+          const isPasswordValid = await bcrypt.compare(password, user.password);
           if (!isPasswordValid) {
             console.error("Invalid password");
             return null;
           }
 
-          return { id: user.userId, email: user.email, name: user.username };
+          return { id: user.userid, email: user.email, name: user.username };
         } catch (error) {
           console.error("Error during authorization:", error);
           return null;
@@ -65,7 +62,7 @@ export const authOptions = {
         const userInDb = await userRepository.findByEmail(user.email);
         if (userInDb) {
           token.role = userInDb.role;
-          token.userId = userInDb.userId;
+          token.userid = userInDb.userid;
         }
       }
       return token;
@@ -74,7 +71,7 @@ export const authOptions = {
     async session({ session, token }) {
       if (token.role) {
         session.user.role = token.role;
-        session.user.id = token.userId;
+        session.user.id = token.userid;
       }
       return session;
     },

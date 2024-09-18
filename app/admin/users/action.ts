@@ -27,7 +27,7 @@ export async function getUserInfo(id: number) {
 }
 export async function updateUserInfo(userData: IUser) {
   try {
-    await userRepository.update(userData.userId, userData);
+    await userRepository.update(userData.userid, userData);
     return { success: true };
   } catch (error) {
     console.error("Failed to update book details", error);
@@ -40,7 +40,7 @@ export async function addUser(userData: IUser) {
     await userRepository.create(userData);
     return { success: true };
   } catch (error) {
-    console.error("Failed to insert book details", error);
+    console.error("Failed to insert user details", error);
     return { success: false, error: error.message };
   }
 }
@@ -58,21 +58,18 @@ export async function updateUserNameAndPassword(
       throw new Error("User not found");
     }
 
-    // If newPassword is provided, hash it and update both username and password
-    if (newPassword) {
-      // Update user details with new password
-      const updatedData = {
-        userId: user.userId,
-        username: newName,
-        email: user.email,
-        passwordHash: newPassword, // Hash the new password
-        role: user.role,
-      };
+    // If newPassword is provided, hash it; otherwise, use the existing password
+    const updatedData = {
+      userid: user.userid,
+      username: newName,
+      email: user.email,
+      password: newPassword ? newPassword : user.password,
+      role: user.role,
+      profileimage: user.profileimage || "",
+    };
 
-      await userRepository.update(user.userId, updatedData);
-    } else {
-      await userRepository.updateUsernameByEmail(user.email, newName);
-    }
+    // Update user information
+    await updateUserInfo(updatedData);
 
     return { success: true };
   } catch (error) {
