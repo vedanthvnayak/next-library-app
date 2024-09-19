@@ -54,4 +54,5 @@ export const books = pgTable("books", {
   numofPages: integer("numofPages").notNull(),
   totalNumberOfCopies: integer("totalNumberOfCopies").notNull(),
   availableNumberOfCopies: integer("availableNumberOfCopies").notNull(),
+  coverimagelink: varchar("coverimagelink", { length: 255 }),
 });

@@ -4,7 +4,7 @@ import { Book, Users, Clock, Search } from "lucide-react";
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
-      <main className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
+      <main className="container mx-auto px-4 py-16 sm:px-6 lg:px-8 pt-20">
         <section className="text-center mb-16">
           <h1 className="text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-gray-200 via-gray-400 to-gray-200">
             The Library Experience
@@ -21,9 +21,9 @@ export default function AboutPage() {
               Our Vision
             </h2>
             <p className="text-gray-400 text-lg">
-              At ज्ञान भाण्डार (Jñāna Bhāṇḍāra) Library, were not just about
-              books. Were about creating an unparalleled experience that
-              inspires curiosity and empowers every individual.
+              At ज्ञान भाण्डार (Jñāna Bhāṇḍāra) Library, we&apos;re not just
+              about books. We&apos;re about creating an unparalleled experience
+              that inspires curiosity and empowers every individual.
             </p>
             <p className="text-gray-400 text-lg">
               Seamlessly blending technology and tradition, we offer a world of

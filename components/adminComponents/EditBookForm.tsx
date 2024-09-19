@@ -1,7 +1,6 @@
-"use client";
-
-import React from "react";
+import React, { useState } from "react";
 import { IBook } from "@/repository/models/books.model";
+import { UploadButton } from "@/utils/uploadthing";
 
 interface EditBookFormProps {
   book: IBook;
@@ -14,7 +13,10 @@ export default function EditBookForm({
   onSave,
   onCancel,
 }: EditBookFormProps) {
-  const [bookData, setBookData] = React.useState<IBook>(book);
+  const [bookData, setBookData] = useState<IBook>(book);
+  const [coverImageUrl, setCoverImageUrl] = useState<string>(
+    book.coverimagelink || ""
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,7 +33,8 @@ export default function EditBookForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(bookData);
+    // Include the new cover image URL in the book data
+    onSave({ ...bookData, coverimagelink: coverImageUrl });
   };
 
   return (
@@ -75,6 +78,35 @@ export default function EditBookForm({
                 />
               </div>
             ))}
+
+            {/* Upload Button for Cover Image */}
+            <div className="space-y-1">
+              <label
+                htmlFor="coverImage"
+                className="block text-sm font-medium text-indigo-200"
+              >
+                Cover Image
+              </label>
+              <UploadButton
+                endpoint="imageUploader"
+                onClientUploadComplete={(res) => {
+                  if (res && res.length > 0) {
+                    setCoverImageUrl(res[0].url); // Set the uploaded image URL
+                  }
+                }}
+                onUploadError={(error) => {
+                  console.error("Upload failed:", error);
+                }}
+              />
+              {coverImageUrl && (
+                <img
+                  src={coverImageUrl}
+                  alt="Cover Image Preview"
+                  className="w-full h-32 object-cover mt-2 rounded-md"
+                />
+              )}
+            </div>
+
             <div className="flex justify-end space-x-3 mt-6">
               <button
                 type="button"

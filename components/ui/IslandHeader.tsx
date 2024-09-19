@@ -10,7 +10,7 @@ import {
   Book,
   Info,
   User,
-} from "lucide-react"; // Import icons
+} from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -23,12 +23,10 @@ export default function Header() {
 
   const isAdminPage = pathname.startsWith("/admin");
 
-  // Reset expanded state when changing pages
   useEffect(() => {
     setIsExpanded(false);
   }, [pathname]);
 
-  // Handle mouse enter/leave for expansion and shrinking
   const handleMouseEnter = () => {
     if (collapseTimeoutRef.current) {
       clearTimeout(collapseTimeoutRef.current);
@@ -61,7 +59,12 @@ export default function Header() {
             width: isExpanded ? "800px" : "256px",
             height: isExpanded ? "56px" : "48px",
           }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          transition={{
+            type: "spring",
+            stiffness: 200,
+            damping: 30,
+            duration: 0.5,
+          }}
           className="bg-gray-900 rounded-full shadow-lg border border-gray-600 mx-auto mt-4"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -76,11 +79,10 @@ export default function Header() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ duration: 0.3 }}
                   className="w-full flex items-center justify-between"
                   onClick={handleLinkClick}
                 >
-                  {/* Logo and Text with min-width */}
                   <Link href="/" className="flex items-center flex-shrink-0">
                     <div className="flex items-center min-w-[150px]">
                       <Library className="h-6 w-6 text-gray-100 mr-2" />
@@ -90,7 +92,6 @@ export default function Header() {
                     </div>
                   </Link>
 
-                  {/* Navigation */}
                   <nav className="flex items-center space-x-4 ml-auto">
                     <NavLink
                       href="/"

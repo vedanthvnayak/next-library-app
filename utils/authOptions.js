@@ -63,6 +63,7 @@ export const authOptions = {
         if (userInDb) {
           token.role = userInDb.role;
           token.userid = userInDb.userid;
+          token.userProfile = userInDb.profileimage;
         }
       }
       return token;
@@ -72,6 +73,7 @@ export const authOptions = {
       if (token.role) {
         session.user.role = token.role;
         session.user.id = token.userid;
+        session.user.image = token.userProfile || session.user.image;
       }
       return session;
     },

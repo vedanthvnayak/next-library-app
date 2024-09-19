@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { updateUserNameAndPassword } from "@/app/admin/users/action";
 import { useRouter } from "next/navigation";
+import { UploadButton } from "@/utils/uploadthing";
+import { uploadProfileImage } from "@/app/profile/action";
 
 interface Profile {
   name: string;
@@ -31,29 +33,34 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ profile }) => {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleImageUploadClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      console.log("Uploaded file:", file);
-    }
-  };
-
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(profile?.name || "");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
+  const [profileImage, setProfileImage] = useState(
+    profile.profilePicture || ""
+  );
+
+  const handleImageUploadComplete = (res: any) => {
+    if (res?.[0]?.url) {
+      setProfileImage(res[0].url);
+      // console.log("Uploaded image URL: ", res[0].url);
+      uploadProfileImage(profile.email, res[0].url);
+    }
+  };
 
   const handleSave = async () => {
-    console.log("Saving profile:", { name, password });
+    console.log("Saving profile:", { name, password, profileImage });
     await updateUserNameAndPassword(profile!.email, name, password);
+    // saveProfileImage(profile!.email, profileImage);
     router.refresh();
     setIsEditing(false);
   };
+
+  // const saveProfileImage = (email: string, imageUrl: string) => {
+  //   console.log("Saving profile image for user:", { email, imageUrl });
+  //   // Replace with actual API call to save profile image link
+  // };
 
   if (!profile) {
     return (
@@ -66,30 +73,23 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ profile }) => {
   }
 
   return (
-    <div className="min-h-screen  bg-gray-800 rounded-2xl flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-gray-800 rounded-2xl flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="relative inline-block group">
             <img
-              src={profile.profilePicture}
+              src={profileImage}
               alt={profile.name}
               className="w-32 h-32 rounded-full border-4 border-indigo-500 shadow-lg transition-all duration-300 group-hover:scale-105"
             />
             {isEditing && (
               <>
-                <button
-                  onClick={handleImageUploadClick}
-                  className="absolute bottom-0 right-0 bg-indigo-600 p-2 rounded-full text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-110"
-                  aria-label="Change profile picture"
-                >
-                  <Camera className="w-5 h-5" />
-                </button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleFileChange}
+                <UploadButton
+                  endpoint="imageUploader"
+                  onClientUploadComplete={handleImageUploadComplete}
+                  onUploadError={(error: Error) =>
+                    alert(`ERROR! ${error.message}`)
+                  }
                 />
               </>
             )}
@@ -231,7 +231,7 @@ const ProfileField: React.FC<{
     <label className="block text-sm font-medium text-gray-400">{label}</label>
     <div className="mt-1 flex items-center">
       <span className="text-gray-400 mr-2">{icon}</span>
-      <p className="text-lg text-white">{value}</p>
+      <span className="text-white">{value}</span>
     </div>
   </div>
 );

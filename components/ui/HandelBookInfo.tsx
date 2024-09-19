@@ -79,8 +79,16 @@ export default function BookInfoClient({ book }: BookInfoClientProps) {
           </div>
           <div className="flex flex-col md:flex-row gap-8 mb-8">
             <div className="w-full md:w-1/3">
-              <div className="bg-gray-700 rounded-lg p-4 h-full flex items-center justify-center">
-                <BookOpen className="w-32 h-32 text-indigo-400" />
+              <div className="bg-gray-700 rounded-lg p-4  flex items-center justify-center w-72 h-72">
+                {book.coverimagelink ? (
+                  <img
+                    src={book.coverimagelink}
+                    alt={`Cover of ${book.title}`}
+                    className="h-full object-contain"
+                  />
+                ) : (
+                  <BookOpen className="w-32 h-32 text-indigo-400" />
+                )}
               </div>
             </div>
             <div className="w-full md:w-2/3">

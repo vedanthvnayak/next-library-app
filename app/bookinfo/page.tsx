@@ -33,7 +33,13 @@ const BookInfoPage: React.FC<{ searchParams: { id: string } }> = async ({
     notFound();
   }
 
-  return <BookInfoClient book={book} />;
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 px-4 sm:px-6 lg:px-8 pt-20">
+      <div className="max-w-7xl mx-auto">
+        <BookInfoClient book={book} />
+      </div>
+    </div>
+  );
 };
 
 export default BookInfoPage;

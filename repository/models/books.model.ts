@@ -7,6 +7,7 @@ export interface IBookBase {
   isbnNo: string;
   numofPages: number;
   totalNumberOfCopies: number;
+  coverimagelink?: string;
 }
 
 export interface IBook extends IBookBase {

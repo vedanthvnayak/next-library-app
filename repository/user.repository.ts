@@ -289,4 +289,53 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
       throw new Error("Failed to update the username.");
     }
   }
+  /**
+   * Updates the profile image URL for a user using their email.
+   * @param {string} email - The email of the user to update.
+   * @param {string} newProfileImageUrl - The new URL for the profile image.
+   * @returns {Promise<IUser | null>} The updated user or null if the user was not found.
+   */
+  async updateProfileImageByEmail(
+    email: string,
+    newProfileImageUrl: string
+  ): Promise<IUser | null> {
+    try {
+      // Check if the user exists by email
+      const [existingUser] = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.email, email))
+        .execute();
+
+      if (!existingUser) {
+        console.log("User not found with the provided email.");
+        return null;
+      }
+
+      // Update the profile image URL and return the updated user data
+      const [updatedUser] = await db
+        .update(usersTable)
+        .set({ profileimage: newProfileImageUrl })
+        .where(eq(usersTable.email, email))
+        .returning({
+          userid: usersTable.userid,
+          username: usersTable.username,
+          email: usersTable.email,
+          role: usersTable.role,
+          profileimage: usersTable.profileimage,
+        });
+
+      // Ensure the update was successful
+      if (!updatedUser) {
+        console.log("Unable to update the profile image URL.");
+        return null;
+      }
+
+      // Return the updated user as IUser
+      return updatedUser as IUser;
+    } catch (err) {
+      console.error("Error updating profile image URL:", err);
+      throw new Error("Failed to update the profile image URL.");
+    }
+  }
 }
