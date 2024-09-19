@@ -65,12 +65,8 @@ export default function Header() {
             damping: 30,
             duration: 0.5,
           }}
-          className={`bg-gray-900 rounded-full shadow-lg border border-gray-600 mx-auto mt-4 
-            ${
-              isExpanded
-                ? "hover:shadow-[0_0_15px_5px_rgba(255,255,255,0.3)]"
-                : ""
-            }`} // Glow effect on hover when expanded
+          className={`bg-gray-900 rounded-full shadow-lg border border-transparent mx-auto mt-4 
+            ${isExpanded ? "hover:rotate-glow-animation" : ""}`}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           aria-expanded={isExpanded}
