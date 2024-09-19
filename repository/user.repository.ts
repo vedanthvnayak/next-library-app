@@ -16,7 +16,6 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
    * @returns {Promise<IUser>} The created user with assigned ID.
    */
   async create(data: IUserBase): Promise<IUser> {
-    console.log(data);
     const saltRounds = 10;
 
     // Ensure you're hashing the plain password, not an already hashed one

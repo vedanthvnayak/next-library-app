@@ -57,6 +57,29 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
+    async signIn({ user, account, profile }) {
+      try {
+        // Only for GoogleProvider
+        if (account.provider === "google") {
+          const userInDb = await userRepository.findByEmail(profile.email);
+          if (!userInDb) {
+            const newUser = {
+              username: profile.name,
+              password: "null", // No password for Google users
+              role: "user",
+              email: profile.email,
+              profileimage: profile.picture,
+            };
+            await userRepository.create(newUser);
+          }
+        }
+        return true;
+      } catch (error) {
+        console.error("Error in signIn callback:", error);
+        return false;
+      }
+    },
+
     async jwt({ token, user }) {
       if (user) {
         const userInDb = await userRepository.findByEmail(user.email);
