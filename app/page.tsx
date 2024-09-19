@@ -18,7 +18,9 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
-      <main className="flex-1">
+      <main className="flex-1 mt-16 sm:mt-20">
+        {" "}
+        {/* Adjust top margin here */}
         {/* Render the client-side HeroSection */}
         <HeroSection />
         <TopBooksSection topBooks={topBooks} />
