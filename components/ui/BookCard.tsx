@@ -1,13 +1,16 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   ExclamationCircleIcon,
   FireIcon,
   BookOpenIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/solid";
 import Modal from "@/components/adminComponents/Modal";
 import { requestBook } from "@/app/books/action";
+import { IBook } from "@/repository/models/books.model";
 
 interface NotificationProps {
   message: string;
@@ -31,9 +34,10 @@ const Notification: React.FC<NotificationProps> = ({
         <p className="mr-4 font-semibold">{message}</p>
         <button
           onClick={onClose}
-          className="ml-4 text-white hover:text-gray-200 focus:outline-none text-xl"
+          className="ml-4 text-white hover:text-gray-200 focus:outline-none"
+          aria-label="Close notification"
         >
-          &times;
+          <XMarkIcon className="h-5 w-5" />
         </button>
       </div>
     </div>
@@ -41,18 +45,11 @@ const Notification: React.FC<NotificationProps> = ({
 };
 
 interface BookCardProps {
-  book: {
-    id: number;
-    title: string;
-    author: string;
-    genre: string;
-    totalNumberOfCopies: number;
-    availableNumberOfCopies: number;
-  };
+  book: IBook;
   session: any;
 }
 
-const BookCard: React.FC<BookCardProps> = ({ book, session }) => {
+export default function Component({ book, session }: BookCardProps) {
   const [message, setMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -97,33 +94,45 @@ const BookCard: React.FC<BookCardProps> = ({ book, session }) => {
   return (
     <>
       <div
-        className={`flex flex-col p-6 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl shadow-2xl transition-all duration-500 transform hover:scale-105 hover:shadow-3xl min-h-[380px] ${
+        className={`flex flex-col bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl shadow-2xl transition-all duration-500 transform hover:scale-105 hover:shadow-3xl overflow-hidden ${
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
+        style={{ width: "320px", height: "440px" }}
       >
-        <div className="flex flex-col flex-grow h-full">
-          <div className="flex-grow flex flex-col justify-between mb-6">
-            <div className="flex-grow">
-              <h3 className="text-xl font-bold text-white text-center mb-4">
-                {book.title}
-              </h3>
-              <p className="text-lg text-gray-300 text-center">{book.author}</p>
+        <div className="relative w-full h-60">
+          {book.coverimagelink ? (
+            <img
+              src={book.coverimagelink}
+              alt={`Cover of ${book.title}`}
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-700">
+              <BookOpenIcon className="h-24 w-24 text-gray-400" />
             </div>
-            <div className="mt-6 px-4 py-3 bg-gray-900 bg-opacity-50 rounded-xl">
-              <div className="flex items-center justify-center text-indigo-400 text-center">
-                <BookOpenIcon className="h-6 w-6 mr-2" />
-                <p className="text-sm">{book.genre}</p>
-              </div>
-              <div className="flex items-center justify-center text-indigo-400 text-center mt-2">
-                {isLowAvailability && (
-                  <ExclamationCircleIcon className="h-6 w-6 text-red-500 mr-2" />
-                )}
-                {isHot && <FireIcon className="h-6 w-6 text-orange-500 mr-2" />}
-                <p className="text-sm">{availableCopies} Available</p>
-              </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent flex flex-col justify-end p-4">
+            <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
+              {book.title}
+            </h3>
+            <p className="text-lg text-gray-300">{book.author}</p>
+          </div>
+        </div>
+        <div className="flex-grow flex flex-col justify-between p-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-center text-indigo-400 text-center">
+              <BookOpenIcon className="h-6 w-6 mr-2" />
+              <p className="text-sm">{book.genre}</p>
+            </div>
+            <div className="flex items-center justify-center text-indigo-400 text-center">
+              {isLowAvailability && (
+                <ExclamationCircleIcon className="h-6 w-6 text-red-500 mr-2" />
+              )}
+              {isHot && <FireIcon className="h-6 w-6 text-orange-500 mr-2" />}
+              <p className="text-sm">{availableCopies} Available</p>
             </div>
           </div>
-          <div className="mt-auto flex space-x-3">
+          <div className="mt-6 flex space-x-3">
             {session && session.user ? (
               <button
                 onClick={() => setIsModalOpen(true)}
@@ -162,6 +171,4 @@ const BookCard: React.FC<BookCardProps> = ({ book, session }) => {
       )}
     </>
   );
-};
-
-export default BookCard;
+}
