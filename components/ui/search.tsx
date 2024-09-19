@@ -21,13 +21,11 @@ export default function Search({
   );
 
   const executeSearch = (term: string) => {
-    console.log(`Searching... ${term}`);
-
     const params = new URLSearchParams(searchParams);
     params.set("offset", "0"); // Reset to the first page
     params.set("limit", "8"); // Default limit, or adjust as needed
     if (term) {
-      params.set("search", term);
+      params.set("search", term); // Set the raw search term, no manual encoding
     } else {
       params.delete("search");
     }

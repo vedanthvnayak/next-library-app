@@ -57,12 +57,12 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
     );
 
   return (
-    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-      <div className="relative">
+    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+      <div className="relative flex-1">
         <select
           onChange={handleFieldChange}
           value={field}
-          className="appearance-none bg-gray-800 text-gray-300 py-2 pl-4 pr-10 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-700"
+          className="appearance-none bg-gray-800 text-gray-300 py-2 pl-4 pr-10 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-700 w-full sm:w-auto"
           aria-label="Sort by field"
         >
           {fieldOptions}
@@ -73,11 +73,11 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
         />
       </div>
 
-      <div className="relative">
+      <div className="relative flex-1">
         <select
           onChange={handleDirectionChange}
           value={direction}
-          className="appearance-none bg-gray-800 text-gray-300 py-2 pl-4 pr-10 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-700"
+          className="appearance-none bg-gray-800 text-gray-300 py-2 pl-4 pr-10 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-700 w-full sm:w-auto"
           aria-label="Sort direction"
         >
           <option value="asc">Ascending (A-Z)</option>

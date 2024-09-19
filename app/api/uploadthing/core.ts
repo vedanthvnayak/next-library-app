@@ -2,8 +2,6 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
-import { UserRepository } from "@/repository/user.repository";
-import { DrizzleManager } from "@/db/drizzleDbConnection";
 
 const f = createUploadthing();
 

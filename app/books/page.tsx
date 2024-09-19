@@ -48,7 +48,7 @@ const BooksPage: React.FC<BooksPageProps> = async ({ searchParams }) => {
   const currentPage = Math.floor(offset / limit) + 1;
 
   return (
-    <section className="w-full py-16 sm:py-24 bg-gray-950 px-4 sm:px-6 lg:px-8">
+    <section className="w-full py-16 sm:py-24 bg-gray-950 px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24">
       <div className="container mx-auto">
         <div className="mb-8 text-gray-300 bg-gray-800 p-6 rounded-2xl shadow-2xl">
           <h2 className="text-2xl font-semibold mb-4 text-center text-indigo-300">
@@ -84,7 +84,7 @@ const BooksPage: React.FC<BooksPageProps> = async ({ searchParams }) => {
         </div>
 
         {books.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 md:gap-10 lg:gap-12 justify-center items-center min-h-screen p-4">
             {books.map((book) => (
               <BookCard key={book.id} book={book} session={session} />
             ))}

@@ -14,7 +14,7 @@ const HeroSection = dynamic(() => import("@/components/HeroSection"), {
 });
 
 export default async function HomePage() {
-  const topBooks = await bookRepository.getTopFourBook();
+  const topBooks = await bookRepository.getTopFiveBook();
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
@@ -32,7 +32,7 @@ function TopBooksSection({ topBooks }) {
   return (
     <section className="py-12 bg-gray-900">
       <TopBooks
-        title="Top 4 New Arrivals 🔥"
+        title="Top 5 New Arrivals 🔥"
         topBooks={topBooks}
         maxBooksPerRow={3}
       />

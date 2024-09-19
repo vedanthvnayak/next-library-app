@@ -251,10 +251,10 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
     }
   }
 
-  async getTopFourBook(): Promise<IBook[]> {
+  async getTopFiveBook(): Promise<IBook[]> {
     try {
       // Fetch the top 4 books
-      const results = await db.select().from(booksTable).limit(4).execute();
+      const results = await db.select().from(booksTable).limit(5).execute();
 
       // Convert the results to IBook[] with id as number
       const convertedResults: IBook[] = results.map((item) => ({
