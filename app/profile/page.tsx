@@ -51,7 +51,7 @@ export default async function ProfilePage() {
         </h1>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">
-            <div className="sticky top-8 space-y-8">
+            <div className="sticky top-8 space-y-8 ">
               <ProfileClient profile={userProfile} />
             </div>
           </div>

@@ -235,7 +235,7 @@ const MobileDropdown = ({ session, isAdminPage }: MobileDropdownProps) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.2 }}
-      className="bg-gray-900 bg-opacity-95 backdrop-blur-lg rounded-2xl shadow-lg space-y-4 absolute top-[60px] left-0 right-0 py-4 px-4"
+      className="bg-gray-900 bg-opacity-95 backdrop-blur-lg rounded-2xl shadow-lg space-y-4 absolute top-[60px] left-0 right-0 py-4 px-3"
     >
       <NavLink href="/" label="Discover" icon={<Home className="h-4 w-4" />} />
       <NavLink

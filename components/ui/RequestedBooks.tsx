@@ -85,7 +85,7 @@ export default function Component({ userId }: { userId: number }) {
   );
 
   return (
-    <div className="bg-gray-900 p-4 sm:p-8 rounded-2xl shadow-2xl">
+    <div className="bg-gray-800 p-4 sm:p-8 rounded-2xl shadow-2xl">
       <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6 flex items-center">
         <Book className="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 text-indigo-400" />
         My Requested Books

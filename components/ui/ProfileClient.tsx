@@ -73,8 +73,8 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ profile }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-800 rounded-2xl flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-gray-800 rounded-2xl flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 ">
+      <div className="max-w-md w-full space-y-8 ">
         <div className="text-center">
           <div className="relative inline-block group">
             <img
