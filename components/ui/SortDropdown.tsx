@@ -6,16 +6,15 @@ import { ChevronDown, SortAsc, SortDesc } from "lucide-react";
 
 interface SortDropdownProps {
   defaultSort: string;
-  type?: "book" | "user"; // Add type prop with default value
+  type?: "book" | "user";
 }
 
 const SortDropdown: React.FC<SortDropdownProps> = ({
   defaultSort,
-  type = "book", // Default to "book"
+  type = "book",
 }) => {
   const router = useRouter();
 
-  // Determine default field and direction from defaultSort
   const [field, setField] = useState<string>(
     defaultSort.split("-")[0] || (type === "book" ? "title" : "id")
   );
@@ -23,14 +22,12 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
     defaultSort.split("-")[1] || "asc"
   );
 
-  // Handle field change
   const handleFieldChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedField = event.target.value;
     setField(selectedField);
     router.push(`?sort=${selectedField}-${direction}`);
   };
 
-  // Handle direction change
   const handleDirectionChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -39,7 +36,6 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
     router.push(`?sort=${field}-${selectedDirection}`);
   };
 
-  // Options based on type
   const fieldOptions =
     type === "book" ? (
       <>
@@ -57,41 +53,41 @@ const SortDropdown: React.FC<SortDropdownProps> = ({
     );
 
   return (
-    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-      <div className="relative flex-1">
+    <div className="flex flex-col space-y-2 w-full sm:flex-row sm:space-y-0 sm:space-x-2 sm:w-auto">
+      <div className="relative flex-1 sm:flex-initial">
         <select
           onChange={handleFieldChange}
           value={field}
-          className="appearance-none bg-gray-800 text-gray-300 py-2 pl-4 pr-10 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-700 w-full sm:w-auto"
+          className="appearance-none w-full sm:w-auto bg-gray-800 text-gray-300 py-2 pl-3 pr-8 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-700 text-sm"
           aria-label="Sort by field"
         >
           {fieldOptions}
         </select>
         <ChevronDown
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
-          size={18}
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+          size={16}
         />
       </div>
 
-      <div className="relative flex-1">
+      <div className="relative flex-1 sm:flex-initial">
         <select
           onChange={handleDirectionChange}
           value={direction}
-          className="appearance-none bg-gray-800 text-gray-300 py-2 pl-4 pr-10 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-700 w-full sm:w-auto"
+          className="appearance-none w-full sm:w-auto bg-gray-800 text-gray-300 py-2 pl-3 pr-8 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-700 text-sm"
           aria-label="Sort direction"
         >
-          <option value="asc">Ascending (A-Z)</option>
-          <option value="desc">Descending (Z-A)</option>
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
         </select>
         {direction === "asc" ? (
           <SortAsc
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
-            size={18}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+            size={16}
           />
         ) : (
           <SortDesc
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
-            size={18}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+            size={16}
           />
         )}
       </div>

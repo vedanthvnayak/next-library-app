@@ -50,28 +50,38 @@ const BooksPage: React.FC<BooksPageProps> = async ({ searchParams }) => {
   return (
     <section className="w-full pt-20 sm:py-24 bg-gray-950 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto">
-        <div className="mb-8 text-gray-300 bg-gray-800 p-6 rounded-2xl shadow-2xl">
-          <h2 className="text-2xl font-semibold mb-4 text-center text-indigo-300">
+        <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-4 sm:p-6 rounded-2xl shadow-lg mb-6">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-center text-indigo-300">
             Discover Your Next Read
           </h2>
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8">
-            <div className="flex items-center space-x-3">
-              <ExclamationCircleIcon className="h-8 w-8 text-red-500" />
-              <span className="text-lg">Limited Stock (2 or fewer copies)</span>
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-6">
+            <div className="flex items-center space-x-3 bg-gray-800 bg-opacity-50 p-2 rounded-lg">
+              <ExclamationCircleIcon className="h-6 w-6 text-red-400" />
+              <span className="text-sm text-gray-300">
+                Limited Stock
+                <span className="block text-xs text-gray-400">2 or fewer</span>
+              </span>
             </div>
-            <div className="flex items-center space-x-3">
-              <FireIcon className="h-8 w-8 text-orange-500" />
-              <span className="text-lg">
-                Popular Choice (Frequently Borrowed)
+            <div className="flex items-center space-x-3 bg-gray-800 bg-opacity-50 p-2 rounded-lg">
+              <FireIcon className="h-6 w-6 text-orange-400" />
+              <span className="text-sm text-gray-300">
+                Popular Choice
+                <span className="block text-xs text-gray-400">
+                  Frequently Borrowed
+                </span>
               </span>
             </div>
           </div>
         </div>
 
         <div className="mb-8">
-          <div className="flex justify-between items-center space-x-4">
-            <Search placeholder="Search books, authors, genres..." />
-            <SortDropdown defaultSort={sort} />
+          <div className="w-full space-y-4 md:space-y-0 md:flex md:justify-between md:items-center md:space-x-4">
+            <div className="w-full ">
+              <Search placeholder="Search books, authors, genres..." />
+            </div>
+            <div className="w-full md:w-auto">
+              <SortDropdown defaultSort={sort} />
+            </div>
           </div>
 
           <div className="mt-4 flex w-full justify-center">
