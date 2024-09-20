@@ -11,6 +11,7 @@ export default function HeroSection() {
   const descriptionRef = useRef(null);
   const [typedText, setTypedText] = useState("");
   const [currentLanguageIndex, setCurrentLanguageIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(true); // New state to track typing status
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,7 +20,6 @@ export default function HeroSection() {
 
       if (heroElement) {
         const scrollFactor = scrollPosition / window.innerHeight;
-
         heroElement.style.transform = `perspective(1000px) rotateX(${
           scrollFactor * 10
         }deg) translateZ(${scrollFactor * -200}px)`;
@@ -30,17 +30,21 @@ export default function HeroSection() {
     const typingEffect = () => {
       const currentText = languages[currentLanguageIndex].text;
 
-      if (typedText.length < currentText.length) {
-        setTypedText((prev) => prev + currentText[typedText.length]);
-      } else {
-        setTimeout(() => {
-          setCurrentLanguageIndex((prev) => (prev + 1) % languages.length);
-          setTypedText("");
-        }, 1300); //speed of waiting
+      if (isTyping) {
+        if (typedText.length < currentText.length) {
+          setTypedText((prev) => prev + currentText[typedText.length]);
+        } else {
+          setIsTyping(false); // Stop typing when full text is displayed
+          setTimeout(() => {
+            setCurrentLanguageIndex((prev) => (prev + 1) % languages.length);
+            setTypedText(""); // Reset typed text for the next language
+            setIsTyping(true); // Start typing the next language
+          }, 1300); // Wait before starting the next language
+        }
       }
     };
 
-    const typingInterval = setInterval(typingEffect, 100); //speed of typing
+    const typingInterval = setInterval(typingEffect, 100); // Speed of typing
 
     window.addEventListener("scroll", handleScroll);
 
@@ -48,7 +52,7 @@ export default function HeroSection() {
       clearInterval(typingInterval);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [typedText, currentLanguageIndex]);
+  }, [typedText, currentLanguageIndex, isTyping]);
 
   return (
     <section
