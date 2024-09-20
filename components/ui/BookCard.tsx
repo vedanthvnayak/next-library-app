@@ -92,12 +92,12 @@ export default function Component({ book, session }: BookCardProps) {
   };
 
   return (
-    <>
+    <div className="flex justify-center items-center ">
       <div
         className={`flex flex-col bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl shadow-2xl transition-all duration-500 transform hover:scale-105 hover:shadow-3xl overflow-hidden ${
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
-        style={{ width: "320px", height: "440px" }}
+        style={{ width: "320px", height: "420px" }}
       >
         <div className="relative w-full h-60">
           {book.coverimagelink ? (
@@ -169,6 +169,6 @@ export default function Component({ book, session }: BookCardProps) {
           success={isSuccess}
         />
       )}
-    </>
+    </div>
   );
 }
