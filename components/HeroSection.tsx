@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Search from "@/components/ui/search";
+
+const languages = [{ text: "ज्ञान भंडार" }, { text: "ಜ್ಞಾನ ಭಂಡಾರ" }];
 
 export default function HeroSection() {
   const heroRef = useRef(null);
   const titleRef = useRef(null);
   const descriptionRef = useRef(null);
+  const [typedText, setTypedText] = useState("");
+  const [currentLanguageIndex, setCurrentLanguageIndex] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,7 +18,6 @@ export default function HeroSection() {
       const heroElement = heroRef.current;
 
       if (heroElement) {
-        // Adjust 3D transform effect based on scroll
         const scrollFactor = scrollPosition / window.innerHeight;
 
         heroElement.style.transform = `perspective(1000px) rotateX(${
@@ -24,12 +27,28 @@ export default function HeroSection() {
       }
     };
 
+    const typingEffect = () => {
+      const currentText = languages[currentLanguageIndex].text;
+
+      if (typedText.length < currentText.length) {
+        setTypedText((prev) => prev + currentText[typedText.length]);
+      } else {
+        setTimeout(() => {
+          setCurrentLanguageIndex((prev) => (prev + 1) % languages.length);
+          setTypedText("");
+        }, 1300); //speed of waiting
+      }
+    };
+
+    const typingInterval = setInterval(typingEffect, 100); //speed of typing
+
     window.addEventListener("scroll", handleScroll);
 
     return () => {
+      clearInterval(typingInterval);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [typedText, currentLanguageIndex]);
 
   return (
     <section
@@ -44,11 +63,11 @@ export default function HeroSection() {
           <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
             Welcome to
           </span>
-          <span className="block text-6xl sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
-            ज्ञान भाण्डार
-          </span>
-          <span className="block text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-400 mt-1">
-            (Jñāna Bhāṇḍāra)
+          <span
+            className="block text-6xl sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent"
+            style={{ minHeight: "90px" }}
+          >
+            {typedText}
           </span>
           <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl mt-2">
             <span className="ml-2" aria-hidden="true">

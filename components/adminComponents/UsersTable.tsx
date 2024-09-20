@@ -62,7 +62,6 @@ export default function UsersTable({ users }: UserTableProps) {
     if (selectedUserId !== null) {
       try {
         const result = await deleteUser(selectedUserId);
-
         if (result.success) {
           toast.success("User deleted successfully.");
           router.refresh();
@@ -139,7 +138,14 @@ export default function UsersTable({ users }: UserTableProps) {
               >
                 <td className="px-2 py-2 sm:px-4 sm:py-3">{user.userid}</td>
                 <td className="px-2 py-2 sm:px-4 sm:py-3">{user.username}</td>
-                <td className="px-2 py-2 sm:px-4 sm:py-3">{user.email}</td>
+                <td className="px-2 py-2 sm:px-4 sm:py-3">
+                  <a
+                    href={`mailto:${user.email}`}
+                    className="text-indigo-400 hover:text-indigo-300"
+                  >
+                    {user.email}
+                  </a>
+                </td>
                 <td className="px-2 py-2 sm:px-4 sm:py-3 hidden md:table-cell">
                   {user.role}
                 </td>

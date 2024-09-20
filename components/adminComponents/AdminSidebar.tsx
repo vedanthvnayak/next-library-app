@@ -9,9 +9,9 @@ import {
   ExclamationCircleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  ArrowUturnLeftIcon, // Import the ArrowUturnLeftIcon
+  ArrowUturnLeftIcon,
 } from "@heroicons/react/24/outline";
-import { BarChartIcon } from "lucide-react";
+import { BarChartIcon, CalendarIcon } from "lucide-react"; // Importing CalendarIcon
 
 interface MenuItem {
   name: string;
@@ -64,6 +64,11 @@ export default function AdminSidebar() {
       name: "Return Book",
       icon: <ArrowUturnLeftIcon className="w-5 h-5" />,
       route: "/admin/returnbook",
+    },
+    {
+      name: "Due Today",
+      icon: <CalendarIcon className="w-5 h-5" />, // Using CalendarIcon
+      route: "/admin/duetoday",
     },
   ];
 
