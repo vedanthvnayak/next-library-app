@@ -3,10 +3,8 @@ import { DrizzleManager } from "@/db/drizzleDbConnection";
 import { BookRepository } from "@/repository/books.repository";
 import { TransactionRepository } from "@/repository/transaction.repository";
 
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const bookRepository = new BookRepository(db);
-const transactionRepository = new TransactionRepository(db);
+const bookRepository = new BookRepository();
+const transactionRepository = new TransactionRepository();
 
 export async function deleteTransaction(transactionId: number) {
   try {

@@ -14,9 +14,7 @@ interface BooksPageProps {
   };
 }
 
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const bookRepository = new BookRepository(db);
+const bookRepository = new BookRepository();
 
 export default async function BooksManagement({
   searchParams,

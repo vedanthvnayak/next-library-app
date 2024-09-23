@@ -14,9 +14,7 @@ interface UserPageProps {
   };
 }
 
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const userRepository = new UserRepository(db);
+const userRepository = new UserRepository();
 
 export default async function UserManagement({ searchParams }: UserPageProps) {
   const offset = parseInt(searchParams.offset || "0", 10);

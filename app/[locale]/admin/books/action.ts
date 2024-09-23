@@ -2,9 +2,8 @@
 import { DrizzleManager } from "@/db/drizzleDbConnection";
 import { BookRepository } from "@/repository/books.repository";
 import { IBook } from "@/repository/models/books.model";
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const bookRepository = new BookRepository(db);
+
+const bookRepository = new BookRepository();
 
 export async function deleteBook(id: number) {
   try {

@@ -2,9 +2,8 @@
 import { DrizzleManager } from "@/db/drizzleDbConnection";
 import { IUser } from "@/repository/models/user.model";
 import { UserRepository } from "@/repository/user.repository";
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const userRepository = new UserRepository(db);
+
+const userRepository = new UserRepository();
 
 export async function deleteUser(id: number) {
   try {

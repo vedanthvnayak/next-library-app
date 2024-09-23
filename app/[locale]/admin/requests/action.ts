@@ -3,10 +3,8 @@ import { DrizzleManager } from "@/db/drizzleDbConnection";
 import { BookRepository } from "@/repository/books.repository";
 import { TransactionRepository } from "@/repository/transaction.repository";
 
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const transactionRepository = new TransactionRepository(db);
-const bookRepository = new BookRepository(db);
+const transactionRepository = new TransactionRepository();
+const bookRepository = new BookRepository();
 
 export async function updateStatus(
   id: number,

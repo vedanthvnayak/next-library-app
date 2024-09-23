@@ -13,9 +13,7 @@ interface TransactionPageProps {
   };
 }
 
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const transactionRepository = new TransactionRepository(db);
+const transactionRepository = new TransactionRepository();
 
 export default async function TransactionManagement({
   searchParams,
