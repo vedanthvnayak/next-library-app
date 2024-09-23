@@ -76,7 +76,7 @@ export default function Header() {
         <motion.div
           initial={false}
           animate={{
-            width: isExpanded ? "800px" : "256px",
+            width: isExpanded ? "1000px" : "256px",
             height: isExpanded ? "56px" : "48px",
           }}
           transition={{
@@ -171,7 +171,7 @@ export default function Header() {
                             alt="Profile"
                             className="h-6 w-6 rounded-full"
                           />
-                          <span className="max-w-[100px] truncate">
+                          <span className="max-w-[150px] truncate">
                             {session.user?.name}
                           </span>
                         </Link>
@@ -344,13 +344,6 @@ const MobileDropdown = ({
             <LogOut className="h-4 w-4" />
             <span>Sign Out</span>
           </button>
-          {!isAdminPage && (
-            <NavLink
-              href="/admin"
-              label="Admin"
-              icon={<User className="h-4 w-4" />}
-            />
-          )}
         </>
       ) : (
         <NavLink
