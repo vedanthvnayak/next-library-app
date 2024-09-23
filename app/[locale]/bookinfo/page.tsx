@@ -5,9 +5,7 @@ import { BookRepository } from "@/repository/books.repository";
 import { IBook } from "@/repository/models/books.model";
 import BookInfoClient from "@/components/ui/HandelBookInfo";
 
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const bookRepository = new BookRepository(db);
+const bookRepository = new BookRepository();
 
 const getBookInfo = async (id: number): Promise<IBook | null> => {
   try {

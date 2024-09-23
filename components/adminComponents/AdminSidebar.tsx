@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -12,6 +11,7 @@ import {
   ArrowUturnLeftIcon,
 } from "@heroicons/react/24/outline";
 import { BarChartIcon, CalendarIcon } from "lucide-react"; // Importing CalendarIcon
+import { signOut } from "next-auth/react"; // Assuming you're using next-auth for authentication
 
 interface MenuItem {
   name: string;
@@ -99,6 +99,7 @@ export default function AdminSidebar() {
           )}
         </button>
       </div>
+
       <nav className="flex-grow mt-6 overflow-y-auto">
         <ul className="space-y-2 px-3">
           {menuItems.map((item) => {
@@ -127,6 +128,26 @@ export default function AdminSidebar() {
           })}
         </ul>
       </nav>
+      {/* Profile Button */}
+      <div className="flex items-center p-4 border-b border-gray-800 cursor-pointer hover:bg-gray-800 transition-colors">
+        <button
+          onClick={() => router.push(`/${locale}/profile`)}
+          className="flex items-center space-x-3"
+        >
+          <UserIcon className="w-5 h-5 text-indigo-400" />
+          {!isCollapsed && <span>Profile</span>}
+        </button>
+      </div>
+      {/* Sign Out Button */}
+      <div className="flex-shrink-0 p-4 border-t border-gray-800 cursor-pointer hover:bg-gray-800 transition-colors">
+        <button
+          onClick={() => signOut({ callbackUrl: "/" })}
+          className="flex items-center space-x-3"
+        >
+          <ArrowUturnLeftIcon className="w-5 h-5 text-indigo-400" />
+          {!isCollapsed && <span>Sign Out</span>}
+        </button>
+      </div>
     </aside>
   );
 }

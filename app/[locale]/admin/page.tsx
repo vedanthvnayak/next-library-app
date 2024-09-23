@@ -10,11 +10,9 @@ import { BookRepository } from "@/repository/books.repository";
 import { UserRepository } from "@/repository/user.repository";
 import { TransactionRepository } from "@/repository/transaction.repository";
 
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const bookRepository = new BookRepository(db);
-const userRepository = new UserRepository(db);
-const transactionRepository = new TransactionRepository(db);
+const bookRepository = new BookRepository();
+const userRepository = new UserRepository();
+const transactionRepository = new TransactionRepository();
 
 const AdminStats = async () => {
   const totalBooks = await bookRepository.getTotalBookCount();

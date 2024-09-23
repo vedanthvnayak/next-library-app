@@ -2,9 +2,7 @@
 import { DrizzleManager } from "@/db/drizzleDbConnection";
 import { UserRepository } from "@/repository/user.repository";
 
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const userRepository = new UserRepository(db);
+const userRepository = new UserRepository();
 
 export async function uploadProfileImage(email: string, url: string) {
   try {

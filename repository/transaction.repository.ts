@@ -11,7 +11,7 @@ import { db } from "@/db/db";
 export class TransactionRepository
   implements IRepository<ITransaction, ITransaction>
 {
-  constructor(private readonly db: MySql2Database<Record<string, unknown>>) {}
+  constructor() {}
 
   async create(data: ITransaction): Promise<ITransaction> {
     try {

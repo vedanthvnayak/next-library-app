@@ -19,9 +19,7 @@ interface BooksPageProps {
   };
 }
 
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const bookRepository = new BookRepository(db);
+const bookRepository = new BookRepository();
 
 const BooksPage: React.FC<BooksPageProps> = async ({ searchParams }) => {
   const session = await getServerSession(authOptions);

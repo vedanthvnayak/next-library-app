@@ -8,7 +8,7 @@ import { IPagedResponse, IPageRequest } from "./models/pagination.model";
 import { db } from "@/db/db";
 import { profile } from "console";
 export class UserRepository implements IRepository<IUserBase, IUser> {
-  constructor(private readonly db: MySql2Database<Record<string, unknown>>) {}
+  constructor() {}
 
   /**
    * Creates a new user and adds them to the repository.

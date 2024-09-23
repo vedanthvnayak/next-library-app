@@ -4,10 +4,8 @@ import { BookRepository } from "@/repository/books.repository";
 import { IBook } from "@/repository/models/books.model";
 import { TransactionRepository } from "@/repository/transaction.repository";
 
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const bookRepository = new BookRepository(db);
-const transactionRepository = new TransactionRepository(db);
+const bookRepository = new BookRepository();
+const transactionRepository = new TransactionRepository();
 
 export async function requestBook(userId: number, bookId: number) {
   const currentDate = new Date();

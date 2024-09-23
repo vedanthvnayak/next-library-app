@@ -4,9 +4,7 @@ import { DrizzleManager } from "@/db/drizzleDbConnection";
 import { BookRepository } from "@/repository/books.repository";
 import { FaBook, FaDatabase } from "react-icons/fa";
 
-const drizzleManager = new DrizzleManager();
-const db = drizzleManager.getPoolDrizzle();
-const bookRepository = new BookRepository(db);
+const bookRepository = new BookRepository();
 
 // Dynamically import the HeroSection (client component)
 const HeroSection = dynamic(() => import("@/components/HeroSection"), {

@@ -19,19 +19,30 @@ export async function middleware(req: NextRequest) {
   const locale = pathname.split("/")[1];
   const cleanPathname = pathname.replace(`/${locale}`, "");
 
-  // Handle paths that start with "/admin"
+  // Redirect admin to /admin ONLY if they try to access "/"
+  if (cleanPathname === "/" && token?.role === "admin") {
+    return NextResponse.redirect(new URL(`/${locale}/admin`, req.url));
+  }
+
+  // Allow admin access to "/admin" and "/profile" routes
   if (cleanPathname.startsWith("/admin")) {
+    // If the user is not logged in or has no role, redirect to the login page
     if (!token || !token.role) {
       return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
     }
 
+    // Only allow admin users to access admin routes
     if (token.role !== "admin") {
       return NextResponse.redirect(new URL(`/${locale}/profile`, req.url));
     }
-  } else if (token?.role === "admin") {
-    return NextResponse.redirect(new URL(`/${locale}/admin`, req.url));
   }
 
+  // Allow access to the "/profile" route for any user
+  if (cleanPathname === "/profile") {
+    return intlMiddleWare(req);
+  }
+
+  // No redirection for other pages, allow admins to access all pages
   return intlMiddleWare(req);
 }
 

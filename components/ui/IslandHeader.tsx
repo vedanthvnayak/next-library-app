@@ -21,7 +21,9 @@ export default function Header() {
   const headerRef = useRef<HTMLDivElement>(null);
   const collapseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const isAdminPage = pathname.startsWith("/admin");
+  // Check if the path starts with /admin or any language prefix followed by /admin
+  const isAdminPage =
+    /^\/(en|kn|fr|es)\/admin/.test(pathname) || pathname.startsWith("/admin");
 
   useEffect(() => {
     setIsExpanded(false);
@@ -48,6 +50,11 @@ export default function Header() {
     event.stopPropagation();
     setIsExpanded(!isExpanded);
   };
+
+  // Hide the header if it's the /admin page
+  if (isAdminPage) {
+    return null;
+  }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
@@ -257,17 +264,24 @@ const MobileDropdown = ({ session, isAdminPage }: MobileDropdownProps) => {
           />
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="w-full text-left flex items-center space-x-2 text-red-400 hover:bg-gray-700 px-3 py-2 rounded-full text-sm font-medium transition-colors duration-300"
+            className="flex items-center space-x-2 text-red-400 hover:bg-gray-700 px-3 py-2 rounded-full text-sm font-medium transition-colors duration-300 w-full text-left"
           >
             <LogOut className="h-4 w-4" />
             <span>Sign Out</span>
           </button>
+          {!isAdminPage && (
+            <NavLink
+              href="/admin"
+              label="Admin"
+              icon={<User className="h-4 w-4" />}
+            />
+          )}
         </>
       ) : (
         <NavLink
           href="/login"
           label="Sign In"
-          icon={<LogOut className="h-4 w-4" />}
+          icon={<User className="h-4 w-4" />}
         />
       )}
     </motion.div>

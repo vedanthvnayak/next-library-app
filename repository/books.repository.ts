@@ -6,7 +6,7 @@ import { and, eq, ilike, like, sql } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { db } from "@/db/db";
 export class BookRepository implements IRepository<IBookBase, IBook> {
-  constructor(private readonly db: MySql2Database<Record<string, unknown>>) {}
+  constructor() {}
 
   /**
    * Creates a new book and adds it to the repository.
