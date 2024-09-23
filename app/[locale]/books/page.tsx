@@ -26,7 +26,7 @@ const BooksPage: React.FC<BooksPageProps> = async ({ searchParams }) => {
   const offset = parseInt(searchParams.offset || "0", 10);
   const limit = parseInt(searchParams.limit || "8", 10);
   const search = searchParams.search || "";
-  const sort = searchParams.sort || "title-asc"; // Default sort
+  const sort = searchParams.sort || "title-asc";
 
   const response = await bookRepository.list({ offset, limit, search, sort });
 

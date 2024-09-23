@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Library,
   LogOut,
@@ -10,6 +10,7 @@ import {
   Book,
   Info,
   User,
+  Globe,
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,16 +18,21 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function Header() {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const collapseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Check if the path starts with /admin or any language prefix followed by /admin
   const isAdminPage =
-    /^\/(en|kn|fr|es)\/admin/.test(pathname) || pathname.startsWith("/admin");
+    /^\/(en|kn)\/admin/.test(pathname) || pathname.startsWith("/admin");
+
+  const [currentLanguage, setCurrentLanguage] = useState(
+    pathname.startsWith("/kn") ? "kn" : "en"
+  );
 
   useEffect(() => {
     setIsExpanded(false);
+    setCurrentLanguage(pathname.startsWith("/kn") ? "kn" : "en");
   }, [pathname]);
 
   const handleMouseEnter = () => {
@@ -51,7 +57,14 @@ export default function Header() {
     setIsExpanded(!isExpanded);
   };
 
-  // Hide the header if it's the /admin page
+  const toggleLanguage = (lang: "en" | "kn") => {
+    if (lang !== currentLanguage) {
+      setCurrentLanguage(lang);
+      const newPathname = pathname.replace(/^\/?(en|kn)?/, `/${lang}`);
+      router.push(newPathname);
+    }
+  };
+
   if (isAdminPage) {
     return null;
   }
@@ -77,7 +90,7 @@ export default function Header() {
               isExpanded
                 ? "hover:shadow-[0_0_15px_5px_rgba(255,255,255,0.3)]"
                 : ""
-            }`} // Glow effect on hover when expanded
+            }`}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           aria-expanded={isExpanded}
@@ -120,6 +133,32 @@ export default function Header() {
                       label="About"
                       onClick={handleLinkClick}
                     />
+
+                    <div className="flex items-center bg-gray-800 rounded-full p-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] border border-gray-700">
+                      <button
+                        onClick={() => toggleLanguage("en")}
+                        className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ${
+                          currentLanguage === "en"
+                            ? "bg-gray-700 text-white shadow-[0_2px_4px_rgba(0,0,0,0.1)]"
+                            : "text-gray-400 hover:text-white"
+                        }`}
+                        aria-label="Switch to English"
+                      >
+                        ENG
+                      </button>
+                      <button
+                        onClick={() => toggleLanguage("kn")}
+                        className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ${
+                          currentLanguage === "kn"
+                            ? "bg-gray-700 text-white shadow-[0_2px_4px_rgba(0,0,0,0.1)]"
+                            : "text-gray-400 hover:text-white"
+                        }`}
+                        aria-label="Switch to Kannada"
+                      >
+                        ಕನ್ನಡ
+                      </button>
+                    </div>
+
                     {session ? (
                       <>
                         <Link
@@ -203,7 +242,12 @@ export default function Header() {
 
         <AnimatePresence>
           {isExpanded && (
-            <MobileDropdown session={session} isAdminPage={isAdminPage} />
+            <MobileDropdown
+              session={session}
+              isAdminPage={isAdminPage}
+              currentLanguage={currentLanguage}
+              toggleLanguage={toggleLanguage}
+            />
           )}
         </AnimatePresence>
       </div>
@@ -233,9 +277,16 @@ const NavLink = ({ href, label, icon, className, onClick }: NavLinkProps) => (
 interface MobileDropdownProps {
   session: any;
   isAdminPage: boolean;
+  currentLanguage: string;
+  toggleLanguage: (lang: "en" | "kn") => void;
 }
 
-const MobileDropdown = ({ session, isAdminPage }: MobileDropdownProps) => {
+const MobileDropdown = ({
+  session,
+  isAdminPage,
+  currentLanguage,
+  toggleLanguage,
+}: MobileDropdownProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -255,6 +306,30 @@ const MobileDropdown = ({ session, isAdminPage }: MobileDropdownProps) => {
         label="About"
         icon={<Info className="h-4 w-4" />}
       />
+      <div className="flex items-center justify-center bg-gray-800 rounded-full p-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] border border-gray-700">
+        <button
+          onClick={() => toggleLanguage("en")}
+          className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ${
+            currentLanguage === "en"
+              ? "bg-gray-700 text-white shadow-[0_2px_4px_rgba(0,0,0,0.1)]"
+              : "text-gray-400 hover:text-white"
+          }`}
+          aria-label="Switch to English"
+        >
+          EN
+        </button>
+        <button
+          onClick={() => toggleLanguage("kn")}
+          className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ${
+            currentLanguage === "kn"
+              ? "bg-gray-700 text-white shadow-[0_2px_4px_rgba(0,0,0,0.1)]"
+              : "text-gray-400 hover:text-white"
+          }`}
+          aria-label="Switch to Kannada"
+        >
+          ಕನ್ನಡ
+        </button>
+      </div>
       {session ? (
         <>
           <NavLink
