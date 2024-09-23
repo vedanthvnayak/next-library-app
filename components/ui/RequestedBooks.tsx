@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Book, CheckCircle, XCircle, RotateCcw, Clock } from "lucide-react";
-import { getTransactions } from "@/app/books/action";
+import { getTransactions } from "@/app/[locale]/books/action";
 import { ITransaction } from "@/repository/models/transactions.model";
 
 const statusIcons = {

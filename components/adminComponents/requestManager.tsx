@@ -3,7 +3,7 @@
 import React from "react";
 import { CheckCircle, XCircle } from "lucide-react";
 import { ITransaction } from "@/repository/models/transactions.model";
-import { updateStatus } from "@/app/admin/requests/action";
+import { updateStatus } from "@/app/[locale]/admin/requests/action";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

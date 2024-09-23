@@ -9,7 +9,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/solid";
 import Modal from "@/components/adminComponents/Modal";
-import { requestBook } from "@/app/books/action";
+import { requestBook } from "@/app/[locale]/books/action";
 import { IBook } from "@/repository/models/books.model";
 
 interface NotificationProps {

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { ITransaction } from "@/repository/models/transactions.model";
 import { Trash2 } from "lucide-react";
-import { deleteTransaction } from "@/app/admin/transactions/action";
+import { deleteTransaction } from "@/app/[locale]/admin/transactions/action";
 import Modal from "@/components/adminComponents/Modal";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";

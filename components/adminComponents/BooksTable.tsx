@@ -16,7 +16,7 @@ import {
   getBookInfo,
   updateBookInfo,
   addBook,
-} from "@/app/admin/books/action";
+} from "@/app/[locale]/admin/books/action";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

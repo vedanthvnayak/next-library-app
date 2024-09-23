@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { signIn, getProviders } from "next-auth/react";
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
-import { addUser } from "@/app/admin/users/action";
-import { useRouter } from "next/navigation"; // Import useRouter for redirection
+import { addUser } from "@/app/[locale]/admin/users/action";
+import { useRouter, usePathname } from "next/navigation"; // Import useRouter and usePathname for navigation and locale extraction
 import { toast, ToastContainer } from "react-toastify"; // Import react-toastify
 import "react-toastify/dist/ReactToastify.css"; // Import react-toastify CSS
 
@@ -24,6 +24,10 @@ export default function AuthForm({
   const [showPassword, setShowPassword] = useState(false);
   const [providers, setProviders] = useState<any>(null);
   const router = useRouter(); // Initialize useRouter for redirection
+  const pathname = usePathname(); // Get the current path
+
+  // Extract locale from pathname (assumes first segment is locale)
+  const locale = pathname.split("/")[1] || "en"; // Default to 'en' if no locale is found
 
   useEffect(() => {
     const fetchProviders = async () => {
@@ -48,8 +52,8 @@ export default function AuthForm({
         } else {
           toast.success("Sign In successful! Redirecting...");
           setTimeout(() => {
-            router.push("/admin"); // Redirect to your desired page
-          }, 1000); // Delay for better UX
+            router.push(`/${locale}/admin`); // Redirect with locale
+          }, 1000);
         }
       } else {
         handleRegister();
@@ -72,9 +76,11 @@ export default function AuthForm({
       role: "user",
     });
 
-    toast.success("Account created successfully! login to access account ...");
+    toast.success(
+      "Account created successfully! Login to access your account..."
+    );
     setTimeout(() => {
-      router.push("/login"); // Redirect to login page after successful registration
+      router.push(`/${locale}/login`); // Redirect to login with locale
     }, 1500);
   };
 
@@ -154,7 +160,9 @@ export default function AuthForm({
               provider.name === "Google" && (
                 <button
                   key={provider.name}
-                  onClick={() => signIn(provider.id, { callbackUrl: "/" })}
+                  onClick={() =>
+                    signIn(provider.id, { callbackUrl: `/${locale}` })
+                  }
                   className="flex items-center justify-center text-gray-100 bg-gray-800 hover:bg-gray-700 rounded-lg px-4 py-3 w-full max-w-xs transition-colors duration-300 border border-gray-700"
                 >
                   <FaGoogle className="mr-2 text-lg" />

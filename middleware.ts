@@ -1,6 +1,10 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
+
+const intlMiddleWare = createMiddleware(routing);
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({
@@ -11,27 +15,26 @@ export async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  if (pathname.startsWith("/admin")) {
+  // Extract locale (like /en, /fr) from the URL and remove it from pathname
+  const locale = pathname.split("/")[1];
+  const cleanPathname = pathname.replace(`/${locale}`, "");
+
+  // Handle paths that start with "/admin"
+  if (cleanPathname.startsWith("/admin")) {
     if (!token || !token.role) {
-      return NextResponse.redirect(
-        new URL("https://next-library-app-weld.vercel.app/login", req.url)
-      );
+      return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
     }
 
     if (token.role !== "admin") {
-      return NextResponse.redirect(
-        new URL("https://next-library-app-weld.vercel.app/profile", req.url)
-      );
+      return NextResponse.redirect(new URL(`/${locale}/profile`, req.url));
     }
   } else if (token?.role === "admin") {
-    return NextResponse.redirect(
-      new URL("https://next-library-app-weld.vercel.app/admin", req.url)
-    );
+    return NextResponse.redirect(new URL(`/${locale}/admin`, req.url));
   }
 
-  return NextResponse.next();
+  return intlMiddleWare(req);
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/"],
+  matcher: ["/((?!api|_next|.*\\..*).*)"],
 };

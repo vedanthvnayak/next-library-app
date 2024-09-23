@@ -11,7 +11,7 @@ import {
   getUserInfo,
   updateUserInfo,
   addUser,
-} from "@/app/admin/users/action";
+} from "@/app/[locale]/admin/users/action";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

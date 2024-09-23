@@ -12,10 +12,10 @@ import {
   EyeOff,
   Lock,
 } from "lucide-react";
-import { updateUserNameAndPassword } from "@/app/admin/users/action";
+import { updateUserNameAndPassword } from "@/app/[locale]/admin/users/action";
 import { useRouter } from "next/navigation";
 import { UploadButton } from "@/utils/uploadthing";
-import { uploadProfileImage } from "@/app/profile/action";
+import { uploadProfileImage } from "@/app/[locale]/profile/action";
 
 interface Profile {
   name: string;

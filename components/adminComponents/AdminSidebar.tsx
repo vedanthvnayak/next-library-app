@@ -24,6 +24,9 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  // Extract the current locale from the pathname
+  const locale = pathname.split("/")[1] || "en"; // Fallback to "en" if no locale is found
+
   useEffect(() => {
     const handleResize = () => {
       setIsCollapsed(window.innerWidth < 768);
@@ -38,37 +41,37 @@ export default function AdminSidebar() {
     {
       name: "Statistics",
       icon: <BarChartIcon className="w-5 h-5" />,
-      route: "/admin",
+      route: `/${locale}/admin`,
     },
     {
       name: "User Management",
       icon: <UserIcon className="w-5 h-5" />,
-      route: "/admin/users",
+      route: `/${locale}/admin/users`,
     },
     {
       name: "Book Management",
       icon: <BookOpenIcon className="w-5 h-5" />,
-      route: "/admin/books",
+      route: `/${locale}/admin/books`,
     },
     {
       name: "Requests Management",
       icon: <ExclamationCircleIcon className="w-5 h-5" />,
-      route: "/admin/requests",
+      route: `/${locale}/admin/requests`,
     },
     {
       name: "Transaction History",
       icon: <ArrowsRightLeftIcon className="w-5 h-5" />,
-      route: "/admin/transactions",
+      route: `/${locale}/admin/transactions`,
     },
     {
       name: "Return Book",
       icon: <ArrowUturnLeftIcon className="w-5 h-5" />,
-      route: "/admin/returnbook",
+      route: `/${locale}/admin/returnbook`,
     },
     {
       name: "Due Today",
       icon: <CalendarIcon className="w-5 h-5" />, // Using CalendarIcon
-      route: "/admin/duetoday",
+      route: `/${locale}/admin/duetoday`,
     },
   ];
 
