@@ -5,14 +5,14 @@ import {
 import { IRepository } from "./models/repository";
 import { ITransaction } from "@/repository/models/transactions.model";
 import { transactions as transactionsTable } from "@/db/drizzle/schema";
-import { and, eq, like, sql, desc } from "drizzle-orm";
+import { and, eq, like, sql, desc, gte, lte, lt } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { db } from "@/db/db";
 export class TransactionRepository
   implements IRepository<ITransaction, ITransaction>
 {
   constructor() {}
-
+  private loanPeriodDays = 14;
   async create(data: ITransaction): Promise<ITransaction> {
     try {
       // Ensure that the data object matches the expected structure
@@ -472,6 +472,92 @@ export class TransactionRepository
     } catch (err) {
       console.error("Error getting pending request count:", err);
       return 0; // Return 0 in case of an error
+    }
+  }
+
+  /**
+   * Get transactions where the due date is today.
+   * @returns {Promise<ITransaction[]>} The list of transactions due today.
+   */
+  async getTransactionsDueToday(): Promise<ITransaction[]> {
+    try {
+      // Get today's date
+      const today = new Date();
+
+      // Calculate the issue date by subtracting the loan period from today
+      const issueDate = new Date(today);
+      issueDate.setDate(today.getDate() - this.loanPeriodDays);
+
+      // Start of the issue date (00:00:00) in ISO format
+      const startOfIssueDate = new Date(issueDate);
+      startOfIssueDate.setHours(0, 0, 0, 0);
+      const startISO = startOfIssueDate.toISOString();
+
+      // End of the issue date (23:59:59) in ISO format
+      const endOfIssueDate = new Date(issueDate);
+      endOfIssueDate.setHours(23, 59, 59, 999);
+      const endISO = endOfIssueDate.toISOString();
+
+      // Fetch transactions within the range of the issue date with approved status
+      const rawResults = await db
+        .select()
+        .from(transactionsTable)
+        .where(
+          and(
+            gte(transactionsTable.issueddate, startISO),
+            lte(transactionsTable.issueddate, endISO),
+            eq(transactionsTable.status, "approved") // Check for approved status
+          )
+        )
+        .execute();
+
+      // Map the database result to ITransaction[]
+      const transactionsDueToday: ITransaction[] = rawResults.map((item) => ({
+        transactionId: Number(item.transactionid), // Convert bigint to number
+        userId: item.userid,
+        bookId: item.bookid,
+        issuedDate: new Date(item.issueddate), // Convert string to Date
+        status: item.status,
+      }));
+
+      return transactionsDueToday;
+    } catch (err) {
+      console.error("Error retrieving transactions due today:", err);
+      throw err;
+    }
+  }
+  async getOverdueTransactions(): Promise<ITransaction[]> {
+    try {
+      // Get today's date
+      const today = new Date();
+
+      // Fetch transactions with issued date and approved status
+      const rawResults = await db
+        .select()
+        .from(transactionsTable)
+        .where(eq(transactionsTable.status, "approved")) // Only approved transactions
+        .execute();
+
+      // Filter overdue transactions
+      const overdueTransactions: ITransaction[] = rawResults
+        .filter((item) => {
+          const issuedDate = new Date(item.issueddate);
+          const dueDate = new Date(issuedDate);
+          dueDate.setDate(dueDate.getDate() + 15); // Assuming due date is 15 days after the issued date
+          return dueDate < today; // Check if due date has passed
+        })
+        .map((item) => ({
+          transactionId: Number(item.transactionid), // Convert bigint to number
+          userId: item.userid,
+          bookId: item.bookid,
+          issuedDate: new Date(item.issueddate), // Convert string to Date
+          status: item.status,
+        }));
+
+      return overdueTransactions;
+    } catch (err) {
+      console.error("Error retrieving overdue transactions:", err);
+      throw err;
     }
   }
 }

@@ -3,7 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import Search from "@/components/ui/search";
 
-const languages = [{ text: "ज्ञान भंडार" }, { text: "ಜ್ಞಾನ ಭಂಡಾರ" }];
+const languages = [
+  { text: "ज्ञान भंडार" },
+  { text: "ಜ್ಞಾನ ಭಂಡಾರ" },
+  { text: "Jñāna Bhāṇḍāra" },
+];
 
 export default function HeroSection() {
   const heroRef = useRef(null);

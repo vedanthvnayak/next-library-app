@@ -10,7 +10,7 @@ import {
   ChevronRightIcon,
   ArrowUturnLeftIcon,
 } from "@heroicons/react/24/outline";
-import { BarChartIcon, CalendarIcon } from "lucide-react"; // Importing CalendarIcon
+import { BarChartIcon, CalendarIcon, Clock } from "lucide-react"; // Importing Clock icon
 import { signOut } from "next-auth/react"; // Assuming you're using next-auth for authentication
 
 interface MenuItem {
@@ -70,8 +70,13 @@ export default function AdminSidebar() {
     },
     {
       name: "Due Today",
-      icon: <CalendarIcon className="w-5 h-5" />, // Using CalendarIcon
+      icon: <CalendarIcon className="w-5 h-5" />,
       route: `/${locale}/admin/duetoday`,
+    },
+    {
+      name: "Overdue",
+      icon: <Clock className="w-5 h-5" />, // Using Clock icon for Overdue
+      route: `/${locale}/admin/overdue`,
     },
   ];
 

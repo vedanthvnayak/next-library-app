@@ -114,7 +114,7 @@ const OpenAiChatBot: React.FC = () => {
     <div className="fixed bottom-4 right-4 z-50 transition-transform">
       {!isChatOpen ? (
         <button
-          className="w-14 h-14 bg-gray-800 text-gray-100 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-700 transition-all duration-300 animate-float"
+          className="w-14 h-14 bg-gray-900 text-gray-100 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-700 transition-all duration-300 animate-float"
           onClick={toggleChat}
           aria-label="Open chat"
         >

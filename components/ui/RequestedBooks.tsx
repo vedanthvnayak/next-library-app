@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Book, CheckCircle, XCircle, RotateCcw, Clock } from "lucide-react";
+import { Book, CheckCircle, XCircle, RotateCcw, Clock, X } from "lucide-react";
 import { getTransactions } from "@/app/[locale]/books/action";
 import { ITransaction } from "@/repository/models/transactions.model";
 
@@ -36,6 +36,10 @@ const calculateDueDate = (issueDateInput: string | Date) => {
   const dueDate = new Date(issueDate);
   dueDate.setDate(issueDate.getDate() + 14);
   return formatDate(dueDate);
+};
+
+const cancelRequest = (transactionId: number) => {
+  console.log(`Cancelling request for transaction ID: ${transactionId}`);
 };
 
 export default function Component({ userId }: { userId: number }) {
@@ -151,6 +155,15 @@ export default function Component({ userId }: { userId: number }) {
                       {transaction.status}
                     </span>
                     {statusIcons[transaction.status]}
+                    {transaction.status === "pending" && (
+                      <button
+                        onClick={() => cancelRequest(transaction.transactionId)}
+                        className="ml-3 p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors duration-200"
+                        aria-label="Cancel request"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </li>
