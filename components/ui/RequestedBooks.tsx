@@ -1,9 +1,18 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Book, CheckCircle, XCircle, RotateCcw, Clock, X } from "lucide-react";
+import {
+  Book,
+  CheckCircle,
+  XCircle,
+  RotateCcw,
+  Clock,
+  X,
+  Calendar,
+} from "lucide-react";
 import { getTransactions } from "@/app/[locale]/books/action";
 import { ITransaction } from "@/repository/models/transactions.model";
+import Link from "next/link";
 
 const statusIcons = {
   pending: <Clock className="w-5 h-5 text-yellow-400" />,
@@ -90,10 +99,19 @@ export default function Component({ userId }: { userId: number }) {
 
   return (
     <div className="bg-gray-800 p-4 sm:p-8 rounded-2xl shadow-2xl">
-      <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6 flex items-center">
-        <Book className="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 text-indigo-400" />
-        My Requested Books
-      </h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-white flex items-center">
+          <Book className="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 text-indigo-400" />
+          My Requested Books
+        </h2>
+        <Link
+          href="/profile/appointments"
+          className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition-colors duration-300 text-sm font-medium"
+        >
+          <Calendar className="w-4 h-4 mr-2" />
+          See Schedules
+        </Link>
+      </div>
       <div
         ref={filterRef}
         className="flex overflow-x-auto pb-3 mb-6 sm:mb-8 scrollbar-hide"

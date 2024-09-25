@@ -16,7 +16,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
-      <main className="flex-1 mt-16 sm:mt-20">
+      <main className="flex-1 mt-16 sm:mt-20 ">
         <HeroSection />
         <TopBooksSection topBooks={topBooks} />
         <VisionSection />

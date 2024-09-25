@@ -11,6 +11,7 @@ import {
   Info,
   User,
   Globe,
+  Calendar,
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -133,6 +134,13 @@ export default function Header() {
                       label="About"
                       onClick={handleLinkClick}
                     />
+                    {session ? (
+                      <NavLink
+                        href="/professors"
+                        label="Professors"
+                        onClick={handleLinkClick}
+                      />
+                    ) : null}
 
                     <div className="flex items-center bg-gray-800 rounded-full p-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] border border-gray-700">
                       <button
@@ -306,6 +314,13 @@ const MobileDropdown = ({
         label="About"
         icon={<Info className="h-4 w-4" />}
       />
+      {session ? (
+        <NavLink
+          href="/professors"
+          label="Professors"
+          icon={<Calendar className="h-4 w-4" />}
+        />
+      ) : null}
       <div className="flex items-center justify-center bg-gray-800 rounded-full p-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] border border-gray-700">
         <button
           onClick={() => toggleLanguage("en")}

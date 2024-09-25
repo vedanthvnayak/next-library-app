@@ -75,10 +75,12 @@ export default function HeroSection() {
             className="block text-6xl sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent"
             style={{ minHeight: "90px" }}
           >
-            {typedText}
+            <h2 className="leading-relaxed sm:leading-relaxed md:leading-relaxed min-h-32">
+              {typedText}
+            </h2>
           </span>
           (Jñāna Bhāṇḍāra)
-          <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl mt-2">
+          <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl mt-2 ">
             <span className="ml-2" aria-hidden="true">
               📚
             </span>

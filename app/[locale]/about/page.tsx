@@ -13,7 +13,7 @@ export default async function AboutPage({
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <main className="container mx-auto px-4 py-24 sm:px-6 lg:px-8">
         <section className="text-center mb-16">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight sm:leading-tight md:leading-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-200 via-gray-400 to-gray-200">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-relaxed sm:leading-relaxed md:leading-relaxed text-transparent bg-clip-text bg-gradient-to-r from-gray-200 via-gray-400 to-gray-200 ">
             {t("libraryExperience")}
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
@@ -23,7 +23,7 @@ export default async function AboutPage({
 
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
           <div className="space-y-6">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight sm:leading-tight md:leading-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-400">
+            <h2 className="leading-relaxed sm:leading-relaxed md:leading-relaxed text-2xl sm:text-3xl md:text-4xl font-semibold   text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-400">
               {t("visionTitle")}
             </h2>
             <p className="text-gray-400 text-sm sm:text-base md:text-lg leading-relaxed">
@@ -46,7 +46,7 @@ export default async function AboutPage({
         </section>
 
         <section className="mb-20">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight sm:leading-tight md:leading-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-400 mb-12 text-center">
+          <h2 className=" text-2xl sm:text-3xl md:text-4xl  font-semibold leading-relaxed sm:leading-relaxed md:leading-relaxed text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-400 mb-12 text-center">
             {t("unmatchedFeaturesTitle")}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -77,7 +77,7 @@ export default async function AboutPage({
                 className="bg-gray-900 border border-gray-700 rounded-lg p-6 hover:border-gray-400 transition-colors duration-300"
               >
                 <feature.icon className="w-12 h-12 text-gray-200 mb-4" />
-                <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 leading-tight">
+                <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 leading-relaxed">
                   {feature.title}
                 </h3>
                 <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
@@ -89,7 +89,7 @@ export default async function AboutPage({
         </section>
 
         <section className="bg-gray-900 rounded-3xl p-6 sm:p-10 mb-20 shadow-2xl">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight sm:leading-tight md:leading-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-400 mb-8 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-relaxed sm:leading-relaxed md:leading-relaxed text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-400 mb-8 text-center">
             {t("legacyTitle")}
           </h2>
           <div className="space-y-6 text-sm sm:text-base md:text-lg">
@@ -103,12 +103,12 @@ export default async function AboutPage({
         </section>
 
         <section>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight sm:leading-tight md:leading-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-400 mb-12 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-relaxed sm:leading-relaxed md:leading-relaxed text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-400 mb-12 text-center">
             {t("joinUsTitle")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
-              <h3 className="text-xl sm:text-2xl font-semibold text-white mb-4 leading-tight">
+              <h3 className="text-xl sm:text-2xl font-semibold text-white mb-4 leading-relaxed">
                 {t("volunteerWithUs.title")}
               </h3>
               <p className="text-gray-400 text-sm sm:text-base md:text-lg mb-4 leading-relaxed">
@@ -119,7 +119,7 @@ export default async function AboutPage({
               </button>
             </div>
             <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
-              <h3 className="text-xl sm:text-2xl font-semibold text-white mb-4 leading-tight">
+              <h3 className="text-xl sm:text-2xl font-semibold text-white mb-4 leading-relaxed">
                 {t("supportUs.title")}
               </h3>
               <p className="text-gray-400 text-sm sm:text-base md:text-lg mb-4 leading-relaxed">

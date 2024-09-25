@@ -20,7 +20,8 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "strict": false
+    "strict": false,
+    "types": ["next-auth", "./types/next-auth"]
   },
   "include": [
     "next-env.d.ts",

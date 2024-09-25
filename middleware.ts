@@ -37,6 +37,13 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // Restrict access to "/professors" to logged-in users
+  if (cleanPathname.startsWith("/professors")) {
+    if (!token) {
+      return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
+    }
+  }
+
   // Allow access to the "/profile" route for any user
   if (cleanPathname === "/profile") {
     return intlMiddleWare(req);

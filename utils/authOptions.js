@@ -87,6 +87,8 @@ export const authOptions = {
           token.role = userInDb.role;
           token.userid = userInDb.userid;
           token.userProfile = userInDb.profileimage;
+          token.userName = userInDb.username;
+          token.email = userInDb.email;
         }
       }
       return token;
@@ -96,6 +98,8 @@ export const authOptions = {
       if (token.role) {
         session.user.role = token.role;
         session.user.id = token.userid;
+        session.user.userName = token.userName;
+        session.user.email = token.email;
         session.user.image = token.userProfile || session.user.image;
       }
       return session;
