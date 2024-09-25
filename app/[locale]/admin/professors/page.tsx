@@ -1,4 +1,4 @@
-import AdminProfessorTable from "@/components/AdminProfessorTable";
+import AdminProfessorTable from "@/components/adminComponents/AdminProfessorTable";
 import { getProfessors } from "@/app/[locale]/lib/calendlyOperations";
 
 export default async function AdminProfessorsPage() {
