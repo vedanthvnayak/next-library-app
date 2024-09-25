@@ -7,7 +7,6 @@ import {
   XCircle,
   RotateCcw,
   Clock,
-  X,
   Calendar,
 } from "lucide-react";
 import { getTransactions } from "@/app/[locale]/books/action";
@@ -164,24 +163,25 @@ export default function Component({ userId }: { userId: number }) {
                       Due: {calculateDueDate(transaction.issuedDate)}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between sm:justify-end sm:space-x-3">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold text-gray-900 ${
-                        statusColors[transaction.status]
-                      }`}
-                    >
-                      {transaction.status}
-                    </span>
-                    {statusIcons[transaction.status]}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between sm:justify-end space-y-2 sm:space-y-0 sm:space-x-3">
                     {transaction.status === "pending" && (
                       <button
                         onClick={() => cancelRequest(transaction.transactionId)}
-                        className="ml-3 p-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors duration-200"
-                        aria-label="Cancel request"
+                        className="px-2 py-1 bg-red-500 hover:bg-red-600 text-white text-xs font-medium rounded-full transition-colors duration-200"
                       >
-                        <X className="w-4 h-4" />
+                        <XCircle className="w-3 h-3" />
                       </button>
                     )}
+                    <div className="flex items-center space-x-2">
+                      {statusIcons[transaction.status]}
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold text-gray-900 ${
+                          statusColors[transaction.status]
+                        }`}
+                      >
+                        {transaction.status}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </li>

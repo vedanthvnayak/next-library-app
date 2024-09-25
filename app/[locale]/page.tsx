@@ -6,9 +6,12 @@ import { FaBook, FaDatabase } from "react-icons/fa";
 
 const bookRepository = new BookRepository();
 
-// Dynamically import the HeroSection (client component)
+// Dynamically import the HeroSection and LumaEmbed (client components)
 const HeroSection = dynamic(() => import("@/components/HeroSection"), {
-  ssr: true, // Ensure it's client-side only
+  ssr: true,
+});
+const LumaEmbed = dynamic(() => import("@/components/LumaEmbed"), {
+  ssr: false, // Client-side only for iframe
 });
 
 export default async function HomePage() {
@@ -19,6 +22,7 @@ export default async function HomePage() {
       <main className="flex-1 mt-16 sm:mt-20 ">
         <HeroSection />
         <TopBooksSection topBooks={topBooks} />
+        <LumaEmbed />
         <VisionSection />
       </main>
     </div>

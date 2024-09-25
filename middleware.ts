@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
-const intlMiddleWare = createMiddleware(routing);
+const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({
@@ -15,8 +15,18 @@ export async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  // Extract locale (like /en, /fr) from the URL and remove it from pathname
-  const locale = pathname.split("/")[1];
+  // Extract locale (like /en, /fr) from the URL
+  let locale = pathname.split("/")[1];
+
+  // Define your locales
+  const locales = ["en", "fr", "es"];
+
+  // Check if the extracted locale is valid
+  if (!locales.includes(locale)) {
+    locale = "en"; // fallback to default locale
+  }
+
+  // Clean the pathname by removing the locale
   const cleanPathname = pathname.replace(`/${locale}`, "");
 
   // Redirect admin to /admin ONLY if they try to access "/"
@@ -30,7 +40,6 @@ export async function middleware(req: NextRequest) {
     if (!token || !token.role) {
       return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
     }
-
     // Only allow admin users to access admin routes
     if (token.role !== "admin") {
       return NextResponse.redirect(new URL(`/${locale}/profile`, req.url));
@@ -38,19 +47,17 @@ export async function middleware(req: NextRequest) {
   }
 
   // Restrict access to "/professors" to logged-in users
-  if (cleanPathname.startsWith("/professors")) {
-    if (!token) {
-      return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
-    }
+  if (cleanPathname.startsWith("/professors") && !token) {
+    return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
   }
 
   // Allow access to the "/profile" route for any user
   if (cleanPathname === "/profile") {
-    return intlMiddleWare(req);
+    return intlMiddleware(req);
   }
 
-  // No redirection for other pages, allow admins to access all pages
-  return intlMiddleWare(req);
+  // Proceed with the intlMiddleware to detect locale for other routes
+  return intlMiddleware(req);
 }
 
 export const config = {

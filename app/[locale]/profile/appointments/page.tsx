@@ -12,6 +12,7 @@ import {
   PlusCircle,
   X,
   Loader2,
+  Filter,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -28,6 +29,7 @@ interface Appointment {
     join_url?: string;
   };
   invitees?: Array<{ name: string }>;
+  event_memberships: Array<{ user_name: string; user_email: string }>;
 }
 
 export default function MyAppointments() {
@@ -39,6 +41,7 @@ export default function MyAppointments() {
   >([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false); // New state to toggle active/all events
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -49,21 +52,20 @@ export default function MyAppointments() {
   }, [status, session, router]);
 
   useEffect(() => {
-    if (selectedDate) {
-      const filtered = appointments.filter((appointment) => {
-        const appointmentDate = new Date(appointment.start_time);
-        const selected = new Date(selectedDate);
-        return (
-          appointmentDate.getDate() === selected.getDate() &&
+    // Filter by date and status (active/all)
+    const filtered = appointments.filter((appointment) => {
+      const appointmentDate = new Date(appointment.start_time);
+      const selected = new Date(selectedDate);
+      const isMatchingDate =
+        !selectedDate ||
+        (appointmentDate.getDate() === selected.getDate() &&
           appointmentDate.getMonth() === selected.getMonth() &&
-          appointmentDate.getFullYear() === selected.getFullYear()
-        );
-      });
-      setFilteredAppointments(filtered);
-    } else {
-      setFilteredAppointments(appointments);
-    }
-  }, [appointments, selectedDate]);
+          appointmentDate.getFullYear() === selected.getFullYear());
+      const isMatchingStatus = showAll || appointment.status === "active"; // Filter by status
+      return isMatchingDate && isMatchingStatus;
+    });
+    setFilteredAppointments(filtered);
+  }, [appointments, selectedDate, showAll]);
 
   const fetchAppointments = async (email: string) => {
     try {
@@ -90,6 +92,10 @@ export default function MyAppointments() {
     setSelectedDate("");
   };
 
+  const toggleShowAll = () => {
+    setShowAll((prev) => !prev); // Toggle between showing all or only active
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 px-4 sm:px-6 lg:px-8 py-12 pt-20">
       <div className="max-w-7xl mx-auto">
@@ -114,7 +120,7 @@ export default function MyAppointments() {
           </NextLink>
         </div>
 
-        <div className="mb-6 flex items-center space-x-4">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
           <div>
             <label
               htmlFor="date-filter"
@@ -133,12 +139,21 @@ export default function MyAppointments() {
           {selectedDate && (
             <button
               onClick={clearFilter}
-              className="flex items-center bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600 transition-colors duration-300 text-sm font-medium mt-6"
+              className="flex items-center bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors duration-300 text-sm font-medium"
             >
               <X className="w-4 h-4 mr-2" />
               Clear Filter
             </button>
           )}
+
+          {/* Toggle between active/all events */}
+          <button
+            onClick={toggleShowAll}
+            className="flex items-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2 rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 text-sm font-medium shadow-md transform hover:scale-105"
+          >
+            <Filter className="w-4 h-4 mr-2" />
+            {showAll ? "Show Only Active" : "Show All Events"}
+          </button>
         </div>
 
         <AnimatePresence>
@@ -218,42 +233,60 @@ export default function MyAppointments() {
                             <div className="flex items-center space-x-2">
                               <MapPin className="h-5 w-5 text-indigo-400" />
                               <p className="text-sm">
-                                {appointment.location.type}
+                                {appointment.location.type === "physical"
+                                  ? "In-Person Meeting"
+                                  : "Virtual Meeting"}
                               </p>
                             </div>
                           )}
-                          {appointment.invitees &&
-                            appointment.invitees.length > 0 && (
-                              <div className="flex items-center space-x-2">
-                                <User className="h-5 w-5 text-indigo-400" />
-                                <p className="text-sm">
-                                  {appointment.invitees[0].name}
-                                </p>
-                              </div>
-                            )}
+                          {appointment.location.join_url && (
+                            <div className="flex items-center space-x-2">
+                              <Link className="h-5 w-5 text-indigo-400" />
+                              <a
+                                href={appointment.location.join_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm underline hover:text-indigo-300"
+                              >
+                                Join Meeting
+                              </a>
+                            </div>
+                          )}
+                          {appointment.invitees && (
+                            <div className="flex items-center space-x-2">
+                              <User className="h-5 w-5 text-indigo-400" />
+                              <p className="text-sm">
+                                Invitees:{" "}
+                                {appointment.invitees
+                                  .map((invitee) => invitee.name)
+                                  .join(", ")}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <div className="px-6 py-4 bg-gray-700 mt-auto">
-                        {appointment.location.join_url ? (
-                          <a
-                            href={appointment.location.join_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center w-full px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors duration-300 text-sm font-medium"
-                          >
-                            <Link className="mr-2 h-4 w-4" />
-                            Join Meeting
-                          </a>
-                        ) : (
-                          <div className="h-10" /> // Placeholder to maintain consistent height
-                        )}
+                      <div className="bg-gray-900 p-4 flex items-center justify-between text-sm text-gray-400">
+                        <div>
+                          Organized by{" "}
+                          <span className="text-indigo-400">
+                            {
+                              appointment.event_memberships[0].user_name // Get the first event member
+                            }
+                          </span>
+                        </div>
+                        <a
+                          href={`mailto:${appointment.event_memberships[0].user_email}`}
+                          className="text-indigo-400 hover:underline"
+                        >
+                          Contact
+                        </a>
                       </div>
                     </motion.div>
                   )
                 )
               ) : (
-                <p className="col-span-full text-center text-gray-400 text-lg">
-                  No appointments scheduled for the selected date.
+                <p className="text-gray-300 text-lg">
+                  No appointments found for the selected filters.
                 </p>
               )}
             </motion.div>
