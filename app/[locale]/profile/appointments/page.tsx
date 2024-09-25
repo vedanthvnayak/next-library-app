@@ -30,7 +30,7 @@ interface Appointment {
   invitees?: Array<{ name: string }>;
 }
 
-const MyAppointments = () => {
+export default function MyAppointments() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -167,9 +167,9 @@ const MyAppointments = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-indigo-500/20 hover:bg-gray-700"
+                      className="bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-indigo-500/20 hover:bg-gray-700 flex flex-col"
                     >
-                      <div className="p-6">
+                      <div className="p-6 flex-grow">
                         <div className="flex justify-between items-start mb-4">
                           <h2 className="text-2xl font-semibold text-white">
                             {appointment.name}
@@ -233,8 +233,8 @@ const MyAppointments = () => {
                             )}
                         </div>
                       </div>
-                      {appointment.location.join_url && (
-                        <div className="px-6 py-4 bg-gray-700">
+                      <div className="px-6 py-4 bg-gray-700 mt-auto">
+                        {appointment.location.join_url ? (
                           <a
                             href={appointment.location.join_url}
                             target="_blank"
@@ -244,8 +244,10 @@ const MyAppointments = () => {
                             <Link className="mr-2 h-4 w-4" />
                             Join Meeting
                           </a>
-                        </div>
-                      )}
+                        ) : (
+                          <div className="h-10" /> // Placeholder to maintain consistent height
+                        )}
+                      </div>
                     </motion.div>
                   )
                 )
@@ -260,6 +262,4 @@ const MyAppointments = () => {
       </div>
     </div>
   );
-};
-
-export default MyAppointments;
+}
