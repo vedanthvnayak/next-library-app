@@ -22,8 +22,9 @@ export default async function HomePage() {
       <main className="flex-1 mt-16 sm:mt-20 ">
         <HeroSection />
         <TopBooksSection topBooks={topBooks} />
-        <LumaEmbed />
+
         <VisionSection />
+        <LumaEmbed />
       </main>
     </div>
   );
