@@ -11,10 +11,12 @@ import {
   ChevronLeft,
   PlusCircle,
   X,
+  Loader2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import NextLink from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Appointment {
   name: string;
@@ -36,6 +38,7 @@ const MyAppointments = () => {
     Appointment[]
   >([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -64,10 +67,13 @@ const MyAppointments = () => {
 
   const fetchAppointments = async (email: string) => {
     try {
+      setLoading(true);
       const fetchedAppointments = await getUsersAppointments(email);
       setAppointments(fetchedAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -135,96 +141,122 @@ const MyAppointments = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAppointments.length > 0 ? (
-            filteredAppointments.map(
-              (appointment: Appointment, index: number) => (
-                <div
-                  key={index}
-                  className="bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-indigo-500/20 hover:bg-gray-700"
-                >
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <h2 className="text-2xl font-semibold text-white">
-                        {appointment.name}
-                      </h2>
-                      <div className="flex flex-col items-end space-y-2">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                            appointment.status === "active"
-                              ? "bg-green-500 text-white"
-                              : "bg-gray-600 text-gray-300"
-                          }`}
-                        >
-                          {appointment.status === "active"
-                            ? "Active"
-                            : "Inactive"}
-                        </span>
-                        {isToday(new Date(appointment.start_time)) && (
-                          <span className="px-2 py-1 rounded-full text-xs font-semibold bg-indigo-500 text-white">
-                            Today
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="space-y-4 text-gray-300">
-                      <div className="flex items-center space-x-2">
-                        <Calendar className="h-5 w-5 text-indigo-400" />
-                        <p className="text-sm">
-                          {new Date(
-                            appointment.start_time
-                          ).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Clock className="h-5 w-5 text-indigo-400" />
-                        <p className="text-sm">
-                          {new Date(
-                            appointment.start_time
-                          ).toLocaleTimeString()}{" "}
-                          -{" "}
-                          {new Date(appointment.end_time).toLocaleTimeString()}
-                        </p>
-                      </div>
-                      {appointment.location.type && (
-                        <div className="flex items-center space-x-2">
-                          <MapPin className="h-5 w-5 text-indigo-400" />
-                          <p className="text-sm">{appointment.location.type}</p>
+        <AnimatePresence>
+          {loading ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex justify-center items-center h-64"
+            >
+              <Loader2 className="w-12 h-12 text-indigo-400 animate-spin" />
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {filteredAppointments.length > 0 ? (
+                filteredAppointments.map(
+                  (appointment: Appointment, index: number) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-indigo-500/20 hover:bg-gray-700"
+                    >
+                      <div className="p-6">
+                        <div className="flex justify-between items-start mb-4">
+                          <h2 className="text-2xl font-semibold text-white">
+                            {appointment.name}
+                          </h2>
+                          <div className="flex flex-col items-end space-y-2">
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                appointment.status === "active"
+                                  ? "bg-green-500 text-white"
+                                  : "bg-gray-600 text-gray-300"
+                              }`}
+                            >
+                              {appointment.status === "active"
+                                ? "Active"
+                                : "Inactive"}
+                            </span>
+                            {isToday(new Date(appointment.start_time)) && (
+                              <span className="px-2 py-1 rounded-full text-xs font-semibold bg-indigo-500 text-white">
+                                Today
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      )}
-                      {appointment.invitees &&
-                        appointment.invitees.length > 0 && (
+                        <div className="space-y-4 text-gray-300">
                           <div className="flex items-center space-x-2">
-                            <User className="h-5 w-5 text-indigo-400" />
+                            <Calendar className="h-5 w-5 text-indigo-400" />
                             <p className="text-sm">
-                              {appointment.invitees[0].name}
+                              {new Date(
+                                appointment.start_time
+                              ).toLocaleDateString()}
                             </p>
                           </div>
-                        )}
-                    </div>
-                  </div>
-                  {appointment.location.join_url && (
-                    <div className="px-6 py-4 bg-gray-700">
-                      <a
-                        href={appointment.location.join_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center w-full px-4 py-2 bg-indigo-700 text-white rounded-full hover:bg-indigo-700 transition-colors duration-300 text-sm font-medium"
-                      >
-                        <Link className="mr-2 h-4 w-4" />
-                        Join Meeting
-                      </a>
-                    </div>
-                  )}
-                </div>
-              )
-            )
-          ) : (
-            <p className="col-span-full text-center text-gray-400 text-lg">
-              No appointments scheduled for the selected date.
-            </p>
+                          <div className="flex items-center space-x-2">
+                            <Clock className="h-5 w-5 text-indigo-400" />
+                            <p className="text-sm">
+                              {new Date(
+                                appointment.start_time
+                              ).toLocaleTimeString()}{" "}
+                              -{" "}
+                              {new Date(
+                                appointment.end_time
+                              ).toLocaleTimeString()}
+                            </p>
+                          </div>
+                          {appointment.location.type && (
+                            <div className="flex items-center space-x-2">
+                              <MapPin className="h-5 w-5 text-indigo-400" />
+                              <p className="text-sm">
+                                {appointment.location.type}
+                              </p>
+                            </div>
+                          )}
+                          {appointment.invitees &&
+                            appointment.invitees.length > 0 && (
+                              <div className="flex items-center space-x-2">
+                                <User className="h-5 w-5 text-indigo-400" />
+                                <p className="text-sm">
+                                  {appointment.invitees[0].name}
+                                </p>
+                              </div>
+                            )}
+                        </div>
+                      </div>
+                      {appointment.location.join_url && (
+                        <div className="px-6 py-4 bg-gray-700">
+                          <a
+                            href={appointment.location.join_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center w-full px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors duration-300 text-sm font-medium"
+                          >
+                            <Link className="mr-2 h-4 w-4" />
+                            Join Meeting
+                          </a>
+                        </div>
+                      )}
+                    </motion.div>
+                  )
+                )
+              ) : (
+                <p className="col-span-full text-center text-gray-400 text-lg">
+                  No appointments scheduled for the selected date.
+                </p>
+              )}
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </div>
     </div>
   );
