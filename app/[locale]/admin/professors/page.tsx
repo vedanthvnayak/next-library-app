@@ -1,5 +1,5 @@
 import AdminProfessorTable from "@/components/AdminProfessorTable";
-import { getProfessors } from "@/app/[locale]/lib/professors";
+import { getProfessors } from "@/app/[locale]/lib/calendlyOperations";
 
 export default async function AdminProfessorsPage() {
   const professors = await getProfessors();
