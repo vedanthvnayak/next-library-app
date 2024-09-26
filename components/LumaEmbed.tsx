@@ -26,7 +26,7 @@ const LumaEmbed = () => {
       <iframe
         src="https://lumalabs.ai/embed/016ff4ce-847a-47b6-a3ba-9017339797f5?mode=sparkles&background=%23ffffff&color=%23000000&showTitle=false&loadBg=true&logoPosition=bottom-left&infoPosition=bottom-right&cinematicVideo=undefined&showMenu=true"
         width="100%"
-        height="600"
+        height="550"
         frameBorder="0"
         title="Luma Embed"
         style={{

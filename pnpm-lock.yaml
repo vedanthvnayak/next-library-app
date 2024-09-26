@@ -95,6 +95,9 @@ importers:
       react:
         specifier: ^18
         version: 18.3.1
+      react-calendly:
+        specifier: ^4.3.1
+        version: 4.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-chartjs-2:
         specifier: ^5.2.0
         version: 5.2.0(chart.js@4.4.4)(react@18.3.1)
@@ -4529,6 +4532,13 @@ packages:
   range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
+
+  react-calendly@4.3.1:
+    resolution: {integrity: sha512-poyUH3NOUOlsotr8ho5WzbsbPuRAppaY+Jvu+C/PkwTP6WT807pNFI8+HrbbuRknXZbd75zpzysOJQvcu3P8Pg==}
+    engines: {node: '>=8', npm: '>=5'}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   react-chartjs-2@5.2.0:
     resolution: {integrity: sha512-98iN5aguJyVSxp5U3CblRLH67J8gkfyGNbiK3c+l1QI/G4irHMPQw44aEPmjVag+YKTyQ260NcF82GTQ3bdscA==}
@@ -10475,6 +10485,11 @@ snapshots:
       inherits: 2.0.4
 
   range-parser@1.2.1: {}
+
+  react-calendly@4.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   react-chartjs-2@5.2.0(chart.js@4.4.4)(react@18.3.1):
     dependencies:

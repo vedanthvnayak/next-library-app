@@ -87,6 +87,7 @@ export async function getUsersAppointments(email: string) {
   try {
     const userUri = await getOrganizationUri();
     const url = `https://api.calendly.com/scheduled_events?organization=${userUri}&invitee_email=${email}`;
+
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -94,20 +95,60 @@ export async function getUsersAppointments(email: string) {
         "Content-Type": "application/json",
       },
     });
+
     if (!response.ok) {
       throw new Error(`Error fetching user info: ${response.statusText}`);
     }
 
     const data = await response.json();
 
-    return data.collection;
+    // Get event updates including invitee details
+    const eventUpdateUrl = await Promise.all(
+      data.collection.map(async (item) => {
+        const parts = item.uri.split("/");
+        const eventUuid = parts[parts.length - 1];
+        const inviteeDetails = await getInviteeDetails(eventUuid);
+
+        return {
+          eventUuid,
+          inviteeDetails,
+        };
+      })
+    );
+
+    // Map the cancel_url and reschedule_url back to data.collection
+    const updatedCollection = data.collection.map((event) => {
+      const eventParts = event.uri.split("/");
+      const eventUuid = eventParts[eventParts.length - 1];
+
+      // Find the corresponding inviteeDetails from eventUpdateUrl
+      const eventUpdate = eventUpdateUrl.find(
+        (update) => update.eventUuid === eventUuid
+      );
+
+      if (eventUpdate && eventUpdate.inviteeDetails) {
+        const invitee = eventUpdate.inviteeDetails.collection[0]; // Assuming there's only one invitee per event
+
+        return {
+          ...event,
+          cancel_url: invitee.cancel_url,
+          reschedule_url: invitee.reschedule_url,
+        };
+      }
+
+      return event; // If no matching event update is found
+    });
+
+    console.log(updatedCollection);
+    return updatedCollection;
   } catch (error) {
     console.error("Error fetching user URI", error);
     throw error;
   }
 }
+
 export async function getScheduledEvents() {
-  const userUri = await getUserUri(); // Get the logged-in user's URI
+  const userUri = await getUserUri();
 
   try {
     const response = await fetch(

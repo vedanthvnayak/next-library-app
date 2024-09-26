@@ -13,13 +13,18 @@ import {
   X,
   Loader2,
   Filter,
+  XCircle,
+  RefreshCw,
+  History,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactCalendlyInline from "@/components/ui/ReactCalendlyInline";
 
 interface Appointment {
+  id: string;
   name: string;
   status: string;
   start_time: string;
@@ -30,7 +35,46 @@ interface Appointment {
   };
   invitees?: Array<{ name: string }>;
   event_memberships: Array<{ user_name: string; user_email: string }>;
+  cancel_url: string;
+  reschedule_url: string;
 }
+
+const CustomSwitch = ({
+  checked,
+  onChange,
+  id,
+  label,
+}: {
+  checked: boolean;
+  onChange: () => void;
+  id: string;
+  label: string;
+}) => {
+  return (
+    <label htmlFor={id} className="flex items-center cursor-pointer">
+      <div className="relative">
+        <input
+          type="checkbox"
+          id={id}
+          className="sr-only"
+          checked={checked}
+          onChange={onChange}
+        />
+        <div
+          className={`block w-14 h-8 rounded-full ${
+            checked ? "bg-indigo-600" : "bg-gray-600"
+          }`}
+        ></div>
+        <div
+          className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${
+            checked ? "transform translate-x-6" : ""
+          }`}
+        ></div>
+      </div>
+      <div className="ml-3 text-gray-300 font-medium">{label}</div>
+    </label>
+  );
+};
 
 export default function MyAppointments() {
   const router = useRouter();
@@ -41,7 +85,11 @@ export default function MyAppointments() {
   >([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [loading, setLoading] = useState(true);
-  const [showAll, setShowAll] = useState(false); // New state to toggle active/all events
+  const [showAll, setShowAll] = useState(false);
+  const [showPast, setShowPast] = useState(false);
+  const [showCalendlyPopup, setShowCalendlyPopup] = useState(false);
+  const [calendlyUrl, setCalendlyUrl] = useState("");
+  const [popupTitle, setPopupTitle] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -52,20 +100,19 @@ export default function MyAppointments() {
   }, [status, session, router]);
 
   useEffect(() => {
-    // Filter by date and status (active/all)
     const filtered = appointments.filter((appointment) => {
       const appointmentDate = new Date(appointment.start_time);
-      const selected = new Date(selectedDate);
-      const isMatchingDate =
-        !selectedDate ||
-        (appointmentDate.getDate() === selected.getDate() &&
-          appointmentDate.getMonth() === selected.getMonth() &&
-          appointmentDate.getFullYear() === selected.getFullYear());
-      const isMatchingStatus = showAll || appointment.status === "active"; // Filter by status
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const selected = selectedDate ? new Date(selectedDate) : today;
+
+      const isMatchingDate = showPast ? true : appointmentDate >= selected;
+      const isMatchingStatus = showAll || appointment.status === "active";
       return isMatchingDate && isMatchingStatus;
     });
     setFilteredAppointments(filtered);
-  }, [appointments, selectedDate, showAll]);
+  }, [appointments, selectedDate, showAll, showPast]);
 
   const fetchAppointments = async (email: string) => {
     try {
@@ -88,12 +135,33 @@ export default function MyAppointments() {
     );
   };
 
+  const isPast = (date: Date) => {
+    const today = new Date();
+    return date < today;
+  };
+
   const clearFilter = () => {
     setSelectedDate("");
   };
 
   const toggleShowAll = () => {
-    setShowAll((prev) => !prev); // Toggle between showing all or only active
+    setShowAll((prev) => !prev);
+  };
+
+  const toggleShowPast = () => {
+    setShowPast((prev) => !prev);
+  };
+
+  const cancelAppointment = (cancelUrl: string) => {
+    setCalendlyUrl(cancelUrl);
+    setPopupTitle("Cancel Appointment");
+    setShowCalendlyPopup(true);
+  };
+
+  const rescheduleAppointment = (rescheduleUrl: string) => {
+    setCalendlyUrl(rescheduleUrl);
+    setPopupTitle("Reschedule Appointment");
+    setShowCalendlyPopup(true);
   };
 
   return (
@@ -120,40 +188,54 @@ export default function MyAppointments() {
           </NextLink>
         </div>
 
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-          <div>
+        <div className="mb-6 flex flex-wrap items-end gap-4">
+          <div className="flex-grow">
             <label
               htmlFor="date-filter"
               className="block text-sm font-medium text-gray-300 mb-1"
             >
-              Filter by Date
+              Filter by Date {showPast ? "(All Dates)" : "(Today and Future)"}
             </label>
-            <input
-              type="date"
-              id="date-filter"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="bg-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <input
+                  type="date"
+                  id="date-filter"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  min={new Date().toISOString().split("T")[0]}
+                  className="bg-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+                />
+                {showPast && (
+                  <div className="absolute inset-0 bg-transparent pointer-events-none" />
+                )}
+              </div>
+              {selectedDate && (
+                <button
+                  onClick={clearFilter}
+                  className="flex items-center bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600 transition-colors duration-300 text-sm font-medium"
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={toggleShowAll}
+              className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-300 text-sm font-medium whitespace-nowrap"
+            >
+              <Filter className="w-4 h-4 mr-2" />
+              {showAll ? "Show Only Active" : "Show All Events"}
+            </button>
+            <CustomSwitch
+              id="show-past"
+              checked={showPast}
+              onChange={toggleShowPast}
+              label="Show Past Appointments"
             />
           </div>
-          {selectedDate && (
-            <button
-              onClick={clearFilter}
-              className="flex items-center bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors duration-300 text-sm font-medium"
-            >
-              <X className="w-4 h-4 mr-2" />
-              Clear Filter
-            </button>
-          )}
-
-          {/* Toggle between active/all events */}
-          <button
-            onClick={toggleShowAll}
-            className="flex items-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2 rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 text-sm font-medium shadow-md transform hover:scale-105"
-          >
-            <Filter className="w-4 h-4 mr-2" />
-            {showAll ? "Show Only Active" : "Show All Events"}
-          </button>
         </div>
 
         <AnimatePresence>
@@ -177,7 +259,7 @@ export default function MyAppointments() {
                 filteredAppointments.map(
                   (appointment: Appointment, index: number) => (
                     <motion.div
-                      key={index}
+                      key={appointment.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
@@ -204,6 +286,11 @@ export default function MyAppointments() {
                             {isToday(new Date(appointment.start_time)) && (
                               <span className="px-2 py-1 rounded-full text-xs font-semibold bg-indigo-500 text-white">
                                 Today
+                              </span>
+                            )}
+                            {isPast(new Date(appointment.start_time)) && (
+                              <span className="px-2 py-1 rounded-full text-xs font-semibold bg-yellow-500 text-white">
+                                Past
                               </span>
                             )}
                           </div>
@@ -239,60 +326,94 @@ export default function MyAppointments() {
                               </p>
                             </div>
                           )}
-                          {appointment.location.join_url && (
-                            <div className="flex items-center space-x-2">
-                              <Link className="h-5 w-5 text-indigo-400" />
-                              <a
-                                href={appointment.location.join_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-sm underline hover:text-indigo-300"
-                              >
-                                Join Meeting
-                              </a>
-                            </div>
-                          )}
-                          {appointment.invitees && (
-                            <div className="flex items-center space-x-2">
-                              <User className="h-5 w-5 text-indigo-400" />
-                              <p className="text-sm">
-                                Invitees:{" "}
-                                {appointment.invitees
-                                  .map((invitee) => invitee.name)
-                                  .join(", ")}
-                              </p>
-                            </div>
-                          )}
+                          {appointment.invitees &&
+                            appointment.invitees.length > 0 && (
+                              <div className="flex items-center space-x-2">
+                                <User className="h-5 w-5 text-indigo-400" />
+                                <p className="text-sm">
+                                  Invitees:{" "}
+                                  {appointment.invitees
+                                    .map((invitee) => invitee.name)
+                                    .join(", ")}
+                                </p>
+                              </div>
+                            )}
                         </div>
                       </div>
-                      <div className="bg-gray-900 p-4 flex items-center justify-between text-sm text-gray-400">
-                        <div>
-                          Organized by{" "}
-                          <span className="text-indigo-400">
-                            {
-                              appointment.event_memberships[0].user_name // Get the first event member
-                            }
+                      <div className="bg-gray-700 p-4 flex items-center justify-between">
+                        {!isPast(new Date(appointment.start_time)) && (
+                          <>
+                            <button
+                              onClick={() =>
+                                cancelAppointment(appointment.cancel_url)
+                              }
+                              className="flex items-center bg-gray-600 text-white px-3 py-2 rounded-md hover:bg-gray-500 transition-colors duration-300 text-sm font-medium"
+                            >
+                              <XCircle className="w-4 h-4 mr-2" />
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() =>
+                                rescheduleAppointment(
+                                  appointment.reschedule_url
+                                )
+                              }
+                              className="flex items-center bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-300 text-sm font-medium"
+                            >
+                              <RefreshCw className="w-4 h-4 mr-2" />
+                              Reschedule
+                            </button>
+                          </>
+                        )}
+                        {isPast(new Date(appointment.start_time)) && (
+                          <span className="text-gray-400 text-sm">
+                            <History className="w-4 h-4 inline-block mr-2" />
+                            Past Appointment
                           </span>
-                        </div>
-                        <a
-                          href={`mailto:${appointment.event_memberships[0].user_email}`}
-                          className="text-indigo-400 hover:underline"
-                        >
-                          Contact
-                        </a>
+                        )}
+                        {appointment.location.join_url &&
+                          !isPast(new Date(appointment.start_time)) && (
+                            <a
+                              href={appointment.location.join_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition-colors duration-300 text-sm font-medium"
+                            >
+                              <Link className="w-4 h-4 mr-2" />
+                              Join
+                            </a>
+                          )}
                       </div>
                     </motion.div>
                   )
                 )
               ) : (
-                <p className="text-gray-300 text-lg">
-                  No appointments found for the selected filters.
+                <p className="col-span-full text-center text-gray-400 text-lg">
+                  No appointments scheduled for the selected filters.
                 </p>
               )}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      {/* Calendly Popup for Reschedule and Cancel */}
+      {showCalendlyPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-gray-800">{popupTitle}</h2>
+              <button
+                onClick={() => setShowCalendlyPopup(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <ReactCalendlyInline url={calendlyUrl} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
