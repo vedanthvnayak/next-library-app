@@ -12,10 +12,10 @@ import {
   PlusCircle,
   X,
   Loader2,
-  Filter,
   XCircle,
   RefreshCw,
   History,
+  ChevronDown,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -61,17 +61,17 @@ const CustomSwitch = ({
           onChange={onChange}
         />
         <div
-          className={`block w-14 h-8 rounded-full ${
+          className={`block w-10 h-6 rounded-full ${
             checked ? "bg-indigo-600" : "bg-gray-600"
           }`}
         ></div>
         <div
-          className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${
-            checked ? "transform translate-x-6" : ""
+          className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition ${
+            checked ? "transform translate-x-4" : ""
           }`}
         ></div>
       </div>
-      <div className="ml-3 text-gray-300 font-medium">{label}</div>
+      <div className="ml-3 text-sm text-gray-300 font-medium">{label}</div>
     </label>
   );
 };
@@ -83,10 +83,10 @@ export default function MyAppointments() {
   const [filteredAppointments, setFilteredAppointments] = useState<
     Appointment[]
   >([]);
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  const [loading, setLoading] = useState(true);
+  const [filterOption, setFilterOption] = useState("upcoming");
   const [showAll, setShowAll] = useState(false);
   const [showPast, setShowPast] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showCalendlyPopup, setShowCalendlyPopup] = useState(false);
   const [calendlyUrl, setCalendlyUrl] = useState("");
   const [popupTitle, setPopupTitle] = useState("");
@@ -105,14 +105,25 @@ export default function MyAppointments() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const selected = selectedDate ? new Date(selectedDate) : today;
+      let isMatchingDate = true;
+      if (filterOption === "upcoming") {
+        isMatchingDate = appointmentDate >= today;
+      } else if (filterOption === "today") {
+        isMatchingDate =
+          appointmentDate.toDateString() === today.toDateString();
+      } else if (filterOption === "thisWeek") {
+        const weekEnd = new Date(today);
+        weekEnd.setDate(today.getDate() + 7);
+        isMatchingDate = appointmentDate >= today && appointmentDate < weekEnd;
+      }
 
-      const isMatchingDate = showPast ? true : appointmentDate >= selected;
       const isMatchingStatus = showAll || appointment.status === "active";
-      return isMatchingDate && isMatchingStatus;
+      const isPastAppointment = showPast || appointmentDate >= today;
+
+      return isMatchingDate && isMatchingStatus && isPastAppointment;
     });
     setFilteredAppointments(filtered);
-  }, [appointments, selectedDate, showAll, showPast]);
+  }, [appointments, filterOption, showAll, showPast]);
 
   const fetchAppointments = async (email: string) => {
     try {
@@ -138,10 +149,6 @@ export default function MyAppointments() {
   const isPast = (date: Date) => {
     const today = new Date();
     return date < today;
-  };
-
-  const clearFilter = () => {
-    setSelectedDate("");
   };
 
   const toggleShowAll = () => {
@@ -188,54 +195,32 @@ export default function MyAppointments() {
           </NextLink>
         </div>
 
-        <div className="mb-6 flex flex-wrap items-end gap-4">
-          <div className="flex-grow">
-            <label
-              htmlFor="date-filter"
-              className="block text-sm font-medium text-gray-300 mb-1"
+        <div className="mb-6 flex flex-wrap items-center gap-4">
+          <div className="relative">
+            <select
+              value={filterOption}
+              onChange={(e) => setFilterOption(e.target.value)}
+              className="appearance-none bg-gray-700 text-white rounded-md px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              Filter by Date {showPast ? "(All Dates)" : "(Today and Future)"}
-            </label>
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <input
-                  type="date"
-                  id="date-filter"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  min={new Date().toISOString().split("T")[0]}
-                  className="bg-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
-                />
-                {showPast && (
-                  <div className="absolute inset-0 bg-transparent pointer-events-none" />
-                )}
-              </div>
-              {selectedDate && (
-                <button
-                  onClick={clearFilter}
-                  className="flex items-center bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600 transition-colors duration-300 text-sm font-medium"
-                >
-                  <X className="w-4 h-4 mr-2" />
-                  Clear
-                </button>
-              )}
-            </div>
+              <option value="upcoming">Upcoming</option>
+              <option value="today">Today</option>
+              <option value="thisWeek">This Week</option>
+              <option value="all">All</option>
+            </select>
+            <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
           </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={toggleShowAll}
-              className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-300 text-sm font-medium whitespace-nowrap"
-            >
-              <Filter className="w-4 h-4 mr-2" />
-              {showAll ? "Show Only Active" : "Show All Events"}
-            </button>
-            <CustomSwitch
-              id="show-past"
-              checked={showPast}
-              onChange={toggleShowPast}
-              label="Show Past Appointments"
-            />
-          </div>
+          <CustomSwitch
+            id="show-all"
+            checked={showAll}
+            onChange={toggleShowAll}
+            label="Show Inactive"
+          />
+          <CustomSwitch
+            id="show-past"
+            checked={showPast}
+            onChange={toggleShowPast}
+            label="Show Past"
+          />
         </div>
 
         <AnimatePresence>
