@@ -1,7 +1,7 @@
+import { getAllProfessors } from "@/app/[locale]/lib/calendlyOperations";
 import { NextResponse } from "next/server";
-import { getProfessors } from "@/app/[locale]/lib/calendlyOperations";
 
 export async function GET() {
-  const professors = await getProfessors();
+  const professors = await getAllProfessors();
   return NextResponse.json(professors);
 }
