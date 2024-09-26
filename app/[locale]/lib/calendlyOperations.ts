@@ -2,11 +2,15 @@ import { sql } from "@vercel/postgres";
 import axios from "axios";
 
 const CALENDLY_API_TOKEN = process.env.NEXT_PUBLIC_CALENDLY_ACCESS_TOKEN;
-export async function getProfessors() {
+export async function getProfessorsForUser() {
+  const { rows } =
+    await sql`SELECT * FROM professors WHERE calendly_event_link IS NOT NULL`;
+  return rows;
+}
+export async function getAllProfessors() {
   const { rows } = await sql`SELECT * FROM professors`;
   return rows;
 }
-
 export async function getProfessor(id: number) {
   const { rows } = await sql`SELECT * FROM professors WHERE id = ${id}`;
   return rows[0];
@@ -77,6 +81,7 @@ export async function getOrganizationUri() {
     }
 
     const data = await response.json();
+    console.log(data.current_organization);
     return data.resource.current_organization;
   } catch (error) {
     console.error("Error fetching organization URI", error);
@@ -101,7 +106,6 @@ export async function getUsersAppointments(email: string) {
     }
 
     const data = await response.json();
-
     // Get event updates including invitee details
     const eventUpdateUrl = await Promise.all(
       data.collection.map(async (item) => {
@@ -139,7 +143,6 @@ export async function getUsersAppointments(email: string) {
       return event; // If no matching event update is found
     });
 
-    console.log(updatedCollection);
     return updatedCollection;
   } catch (error) {
     console.error("Error fetching user URI", error);

@@ -10,7 +10,7 @@ interface ReactCalendlyInlineProps {
 const ReactCalendlyInline: React.FC<ReactCalendlyInlineProps> = ({ url }) => {
   // Append the custom appearance parameters to the URL
   const customizedUrl = `${url}?background_color=1f2937&text_color=f9fafb&primary_color=6366f1`;
-
+  console.log(customizedUrl);
   return (
     <div className="w-full h-full bg-gray-900 rounded-lg shadow-lg overflow-hidden">
       <div className="p-4 bg-gray-800 border-b border-gray-700">

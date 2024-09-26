@@ -56,3 +56,11 @@ export const books = pgTable("books", {
   availableNumberOfCopies: integer("availableNumberOfCopies").notNull(),
   coverimagelink: varchar("coverimagelink", { length: 255 }),
 });
+export const professors = pgTable("professors", {
+  id: serial("id").primaryKey().notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  department: varchar("department", { length: 255 }).notNull(),
+  shortBio: text("short_bio"),
+  calendlyEventLink: varchar("calendly_event_link", { length: 255 }),
+  email: varchar("email", { length: 255 }),
+});

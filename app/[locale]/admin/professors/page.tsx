@@ -1,8 +1,8 @@
 import AdminProfessorTable from "@/components/adminComponents/AdminProfessorTable";
-import { getProfessors } from "@/app/[locale]/lib/calendlyOperations";
+import { getAllProfessors } from "@/app/[locale]/lib/calendlyOperations";
 
 export default async function AdminProfessorsPage() {
-  const professors = await getProfessors();
+  const professors = await getAllProfessors();
 
   return (
     <div className="container mx-auto px-4 py-8">

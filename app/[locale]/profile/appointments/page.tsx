@@ -174,10 +174,11 @@ export default function MyAppointments() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 px-4 sm:px-6 lg:px-8 py-12 pt-20">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-8 space-y-4 md:space-y-0">
           <NextLink
             href="/profile"
             className="flex items-center text-indigo-400 hover:text-indigo-300 transition-colors duration-300"
+            aria-label="Back to Profile"
           >
             <ChevronLeft className="w-5 h-5 mr-2" />
             <span className="text-sm font-medium">Back to Profile</span>
@@ -189,6 +190,7 @@ export default function MyAppointments() {
           <NextLink
             href="/professors"
             className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition-colors duration-300 text-sm font-medium"
+            aria-label="Schedule a new meeting"
           >
             <PlusCircle className="w-4 h-4 mr-2" />
             Schedule Meeting
@@ -200,14 +202,15 @@ export default function MyAppointments() {
             <select
               value={filterOption}
               onChange={(e) => setFilterOption(e.target.value)}
-              className="appearance-none bg-gray-700 text-white rounded-md px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="appearance-none bg-gray-700 text-white rounded-md px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300"
+              aria-label="Filter Appointments"
             >
               <option value="upcoming">Upcoming</option>
               <option value="today">Today</option>
               <option value="thisWeek">This Week</option>
               <option value="all">All</option>
             </select>
-            <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
           </div>
           <CustomSwitch
             id="show-all"
@@ -249,7 +252,7 @@ export default function MyAppointments() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-indigo-500/20 hover:bg-gray-700 flex flex-col"
+                      className="bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-indigo-500/40 flex flex-col"
                     >
                       <div className="p-6 flex-grow">
                         <div className="flex justify-between items-start mb-4">
@@ -286,7 +289,11 @@ export default function MyAppointments() {
                             <p className="text-sm">
                               {new Date(
                                 appointment.start_time
-                              ).toLocaleDateString()}
+                              ).toLocaleDateString(undefined, {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })}
                             </p>
                           </div>
                           <div className="flex items-center space-x-2">
@@ -294,11 +301,17 @@ export default function MyAppointments() {
                             <p className="text-sm">
                               {new Date(
                                 appointment.start_time
-                              ).toLocaleTimeString()}{" "}
+                              ).toLocaleTimeString(undefined, {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}{" "}
                               -{" "}
                               {new Date(
                                 appointment.end_time
-                              ).toLocaleTimeString()}
+                              ).toLocaleTimeString(undefined, {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
                             </p>
                           </div>
                           {appointment.location.type && (
@@ -332,7 +345,8 @@ export default function MyAppointments() {
                               onClick={() =>
                                 cancelAppointment(appointment.cancel_url)
                               }
-                              className="flex items-center bg-gray-600 text-white px-3 py-2 rounded-md hover:bg-gray-500 transition-colors duration-300 text-sm font-medium"
+                              className="flex items-center bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-500 transition-colors duration-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-400"
+                              aria-label="Cancel Appointment"
                             >
                               <XCircle className="w-4 h-4 mr-2" />
                               Cancel
@@ -343,7 +357,8 @@ export default function MyAppointments() {
                                   appointment.reschedule_url
                                 )
                               }
-                              className="flex items-center bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-300 text-sm font-medium"
+                              className="flex items-center bg-gray-300 text-indigo-600 px-3 py-2 rounded-md hover:bg-gray-200 transition-colors duration-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                              aria-label="Reschedule Appointment"
                             >
                               <RefreshCw className="w-4 h-4 mr-2" />
                               Reschedule
@@ -351,8 +366,8 @@ export default function MyAppointments() {
                           </>
                         )}
                         {isPast(new Date(appointment.start_time)) && (
-                          <span className="text-gray-400 text-sm">
-                            <History className="w-4 h-4 inline-block mr-2" />
+                          <span className="text-gray-400 text-sm flex items-center">
+                            <History className="w-4 h-4 mr-2" />
                             Past Appointment
                           </span>
                         )}
@@ -362,7 +377,8 @@ export default function MyAppointments() {
                               href={appointment.location.join_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition-colors duration-300 text-sm font-medium"
+                              className="flex items-center bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition-colors duration-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-400"
+                              aria-label="Join Appointment"
                             >
                               <Link className="w-4 h-4 mr-2" />
                               Join
@@ -384,18 +400,23 @@ export default function MyAppointments() {
 
       {/* Calendly Popup for Reschedule and Cancel */}
       {showCalendlyPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+          <div className="bg-gray-900 rounded-xl shadow-lg p-6 w-full max-w-6xl">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-gray-800">{popupTitle}</h2>
+              <h2 className="text-3xl font-bold text-indigo-400">
+                {popupTitle}
+              </h2>
               <button
                 onClick={() => setShowCalendlyPopup(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-400 hover:text-indigo-500 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 rounded"
+                aria-label="Close Popup"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <ReactCalendlyInline url={calendlyUrl} />
+            <div className="bg-gray-800 p-4 rounded-lg border border-gray-700 shadow-inner">
+              <ReactCalendlyInline url={calendlyUrl} />
+            </div>
           </div>
         </div>
       )}
