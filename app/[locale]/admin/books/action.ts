@@ -1,5 +1,4 @@
 "use server";
-import { DrizzleManager } from "@/db/drizzleDbConnection";
 import { BookRepository } from "@/repository/books.repository";
 import { IBook } from "@/repository/models/books.model";
 
@@ -34,7 +33,7 @@ export async function updateBookInfo(bookData: IBook) {
   }
 }
 
-export async function addBook(bookData: IBook) {
+export async function addBook(bookData: Omit<IBook, "id">) {
   try {
     await bookRepository.create(bookData);
     return { success: true };

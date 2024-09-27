@@ -1,4 +1,4 @@
-import { getAllProfessors } from "@/app/[locale]/lib/calendlyOperations";
+import { getAllProfessors } from "@/app/[locale]/admin/professors/calendlyOperations";
 import { NextResponse } from "next/server";
 
 export async function GET() {

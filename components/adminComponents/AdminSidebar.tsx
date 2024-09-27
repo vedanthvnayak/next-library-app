@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -9,9 +10,10 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ArrowUturnLeftIcon,
+  AcademicCapIcon,
 } from "@heroicons/react/24/outline";
-import { BarChartIcon, CalendarIcon, Clock } from "lucide-react"; // Importing Clock icon
-import { signOut } from "next-auth/react"; // Assuming you're using next-auth for authentication
+import { BarChartIcon, CalendarIcon, Clock } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 interface MenuItem {
   name: string;
@@ -24,8 +26,7 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // Extract the current locale from the pathname
-  const locale = pathname.split("/")[1] || "en"; // Fallback to "en" if no locale is found
+  const locale = pathname.split("/")[1] || "en";
 
   useEffect(() => {
     const handleResize = () => {
@@ -54,6 +55,11 @@ export default function AdminSidebar() {
       route: `/${locale}/admin/books`,
     },
     {
+      name: "Professor Management",
+      icon: <AcademicCapIcon className="w-5 h-5" />,
+      route: `/${locale}/admin/professors`,
+    },
+    {
       name: "Requests Management",
       icon: <ExclamationCircleIcon className="w-5 h-5" />,
       route: `/${locale}/admin/requests`,
@@ -75,7 +81,7 @@ export default function AdminSidebar() {
     },
     {
       name: "Overdue",
-      icon: <Clock className="w-5 h-5" />, // Using Clock icon for Overdue
+      icon: <Clock className="w-5 h-5" />,
       route: `/${locale}/admin/overdue`,
     },
   ];
@@ -133,7 +139,6 @@ export default function AdminSidebar() {
           })}
         </ul>
       </nav>
-      {/* Profile Button */}
       <div className="flex items-center p-4 border-b border-gray-800 cursor-pointer hover:bg-gray-800 transition-colors">
         <button
           onClick={() => router.push(`/${locale}/profile`)}
@@ -143,7 +148,6 @@ export default function AdminSidebar() {
           {!isCollapsed && <span>Profile</span>}
         </button>
       </div>
-      {/* Sign Out Button */}
       <div className="flex-shrink-0 p-4 border-t border-gray-800 cursor-pointer hover:bg-gray-800 transition-colors">
         <button
           onClick={() => signOut({ callbackUrl: "/" })}

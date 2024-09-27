@@ -2,7 +2,7 @@ import { IPageRequest, IPagedResponse } from "./models/pagination.model";
 import { IRepository } from "./models/repository";
 import { IBookBase, IBook } from "./models/books.model";
 import { books as booksTable } from "../db/drizzle/schema";
-import { and, eq, ilike, like, sql } from "drizzle-orm";
+import { and, eq, ilike, like, SQL, sql } from "drizzle-orm";
 import { MySql2Database } from "drizzle-orm/mysql2";
 import { db } from "@/db/db";
 
@@ -13,7 +13,7 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
     const [book] = await db
       .select()
       .from(booksTable)
-      .where(eq(booksTable.id, BigInt(id)));
+      .where(eq(booksTable.id, id));
 
     return book ? ({ ...book, id: Number(book.id) } as IBook) : null;
   }
@@ -25,17 +25,18 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
     };
 
     try {
-      const [result] = await db
+      // Insert the book and return the id
+      const result = await db
         .insert(booksTable)
         .values(book)
         .returning({ id: booksTable.id });
 
-      const insertedBookId = result.id;
-      if (insertedBookId) {
+      // Ensure the result is not empty
+      if (result.length > 0 && result[0].id) {
+        const insertedBookId = result[0].id; // Access the first element
         return (await this.fetchBookById(Number(insertedBookId))) as IBook;
       } else {
-        console.error("Inserted but ID not matching");
-        return { ...book, id: 0 } as IBook;
+        console.error("Insert succeeded but ID not returned");
       }
     } catch (err) {
       console.error("Error creating book:", err);
@@ -48,7 +49,7 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
       const result = await db
         .update(booksTable)
         .set(data)
-        .where(eq(booksTable.id, BigInt(id)))
+        .where(eq(booksTable.id, id))
         .returning();
 
       if (result) {
@@ -68,9 +69,7 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
       const deletingBook = await this.fetchBookById(id);
 
       if (deletingBook) {
-        const result = await db
-          .delete(booksTable)
-          .where(eq(booksTable.id, BigInt(id)));
+        const result = await db.delete(booksTable).where(eq(booksTable.id, id));
 
         if (result) {
           return deletingBook;
@@ -98,12 +97,12 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
   }
 
   async list(params: IPageRequest): Promise<IPagedResponse<IBook> | undefined> {
-    let searchWhereClause;
-    let orderByClause;
+    let searchWhereClause: SQL;
+    let orderByClause: SQL;
 
     if (params.search) {
       const search = `%${params.search.toLowerCase()}%`;
-      searchWhereClause = sql`${booksTable.title} LIKE ${search} OR ${booksTable.isbnNo} LIKE ${search} OR ${booksTable.author} LIKE ${search} OR ${booksTable.genre} LIKE ${search}`;
+      searchWhereClause = sql`${booksTable.title} ILIKE ${search} OR ${booksTable.isbnNo} ILIKE ${search} OR ${booksTable.author} ILIKE ${search} OR ${booksTable.genre} ILIKE ${search}`;
     }
 
     switch (params.sort) {
@@ -173,7 +172,7 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
       const results = await db
         .select()
         .from(booksTable)
-        .where(like(booksTable.title, `%${keyword}%`))
+        .where(ilike(booksTable.title, `%${keyword}%`))
         .limit(100)
         .execute();
 
@@ -213,7 +212,7 @@ export class BookRepository implements IRepository<IBookBase, IBook> {
 
   async updateAvailableNumberOfCopies(id: number, difference: number) {
     try {
-      const bigintId = BigInt(id);
+      const bigintId = id;
 
       const currentBook = await db
         .select({ availableNumberOfCopies: booksTable.availableNumberOfCopies })

@@ -1,12 +1,11 @@
 import bcrypt from "bcrypt";
 import { IRepository } from "@/repository/models/repository";
-import { MySql2Database } from "drizzle-orm/mysql2";
 import { and, eq, like, sql } from "drizzle-orm";
 import { users as usersTable } from "@/db/drizzle/schema";
 import { IUserBase, IUser } from "@/repository/models/user.model";
 import { IPagedResponse, IPageRequest } from "./models/pagination.model";
 import { db } from "@/db/db";
-import { profile } from "console";
+
 export class UserRepository implements IRepository<IUserBase, IUser> {
   constructor() {}
 

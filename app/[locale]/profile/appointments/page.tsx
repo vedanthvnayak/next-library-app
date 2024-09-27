@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getUsersAppointments } from "@/app/[locale]/lib/calendlyOperations";
+
 import {
   Calendar,
   Clock,
@@ -22,6 +22,7 @@ import { useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactCalendlyInline from "@/components/ui/ReactCalendlyInline";
+import { getUsersAppointments } from "../../admin/professors/calendlyOperations";
 
 interface Appointment {
   id: string;

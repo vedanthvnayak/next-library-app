@@ -45,7 +45,7 @@ export const transactions = pgTable("transactions", {
 });
 
 export const books = pgTable("books", {
-  id: bigserial("id", { mode: "bigint" }).primaryKey().notNull(),
+  id: serial("id").primaryKey().notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   author: varchar("author", { length: 255 }).notNull(),
   publisher: varchar("publisher", { length: 255 }),

@@ -79,7 +79,7 @@ export default function BooksTable({ books: initialBooks }: BooksTableProps) {
   const handleAddBookClick = () => {
     setIsEditing(true);
     setEditBookData({
-      id: 0,
+      id: 0, // Add this line to include the 'id' property
       title: "",
       author: "",
       publisher: "",
@@ -134,7 +134,8 @@ export default function BooksTable({ books: initialBooks }: BooksTableProps) {
     try {
       let result;
       if (editBookData?.id === 0) {
-        result = await addBook(updatedBookData);
+        const { id, ...bookWithoutId } = updatedBookData;
+        result = await addBook(bookWithoutId);
       } else {
         result = await updateBookInfo(updatedBookData);
       }
