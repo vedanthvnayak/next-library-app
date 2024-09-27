@@ -12,6 +12,7 @@ import {
   User,
   Globe,
   Calendar,
+  LayoutDashboard,
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -70,6 +71,8 @@ export default function Header() {
     return null;
   }
 
+  const isAdmin = session?.user?.role === "admin";
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
       {/* Desktop Header */}
@@ -119,11 +122,20 @@ export default function Header() {
                   </Link>
 
                   <nav className="flex items-center space-x-4 ml-auto">
-                    <NavLink
-                      href="/"
-                      label="Discover"
-                      onClick={handleLinkClick}
-                    />
+                    {isAdmin ? (
+                      <NavLink
+                        href="/admin"
+                        label="Dashboard"
+                        icon={<LayoutDashboard className="h-4 w-4" />}
+                        onClick={handleLinkClick}
+                      />
+                    ) : (
+                      <NavLink
+                        href="/"
+                        label="Discover"
+                        onClick={handleLinkClick}
+                      />
+                    )}
                     <NavLink
                       href="/books"
                       label="Books"
@@ -255,6 +267,7 @@ export default function Header() {
               isAdminPage={isAdminPage}
               currentLanguage={currentLanguage}
               toggleLanguage={toggleLanguage}
+              isAdmin={isAdmin}
             />
           )}
         </AnimatePresence>
@@ -287,6 +300,7 @@ interface MobileDropdownProps {
   isAdminPage: boolean;
   currentLanguage: string;
   toggleLanguage: (lang: "en" | "kn") => void;
+  isAdmin: boolean;
 }
 
 const MobileDropdown = ({
@@ -294,6 +308,7 @@ const MobileDropdown = ({
   isAdminPage,
   currentLanguage,
   toggleLanguage,
+  isAdmin,
 }: MobileDropdownProps) => {
   return (
     <motion.div
@@ -303,7 +318,19 @@ const MobileDropdown = ({
       transition={{ duration: 0.2 }}
       className="bg-gray-900 bg-opacity-95 backdrop-blur-lg rounded-2xl shadow-lg space-y-4 absolute top-[60px] left-0 right-0 py-4 px-3"
     >
-      <NavLink href="/" label="Discover" icon={<Home className="h-4 w-4" />} />
+      {isAdmin ? (
+        <NavLink
+          href="/admin"
+          label="Dashboard"
+          icon={<LayoutDashboard className="h-4 w-4" />}
+        />
+      ) : (
+        <NavLink
+          href="/"
+          label="Discover"
+          icon={<Home className="h-4 w-4" />}
+        />
+      )}
       <NavLink
         href="/books"
         label="Books"

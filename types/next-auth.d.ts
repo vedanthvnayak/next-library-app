@@ -8,7 +8,8 @@ declare module "next-auth" {
       name?: string;
       email?: string;
       image?: string;
-      calendlyUuid?: string; // Add calendlyUuid here
+      calendlyUuid?: string;
+      role?: string;
     };
   }
 
