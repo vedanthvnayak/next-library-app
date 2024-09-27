@@ -1,5 +1,5 @@
 import ProfessorList from "@/components/ProfessorList";
-import { getProfessorsForUser } from "@/app/[locale]/lib/calendlyOperations";
+import { getProfessorsForUser } from "@/app/[locale]/admin/professors/calendlyOperations";
 import { Book } from "lucide-react";
 
 export default async function ProfessorsPage() {

@@ -188,6 +188,18 @@ export class ProfessorRepository
       ? ({ ...professor, id: Number(professor.id) } as IProfessor)
       : null;
   }
+
+  async getProfessorsForUser(id: number) {
+    const professors = await db
+      .select()
+      .from(professorsTable)
+      .where(eq(professorsTable.id, id));
+
+    return professors.map((professor) => ({
+      ...professor,
+      id: professor.id,
+    }));
+  }
 }
 
 export const professorRepository = new ProfessorRepository();

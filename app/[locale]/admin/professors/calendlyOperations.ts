@@ -18,8 +18,8 @@ export async function getAllProfessors() {
   return rows;
 }
 export async function getProfessor(id: number) {
-  const { rows } = await sql`SELECT * FROM professors WHERE id = ${id}`;
-  return rows[0];
+  const professors = await professorRepository.getProfessorsForUser(id);
+  return professors[0];
 }
 const sendInvitation = async (email: string, org_id: string) => {
   const payload: InvitationPayload = { email };

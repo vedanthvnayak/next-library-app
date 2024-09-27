@@ -1,4 +1,4 @@
-import { getProfessor } from "@/app/[locale]/lib/calendlyOperations";
+import { getProfessor } from "@/app/[locale]/admin/professors/calendlyOperations";
 import CalendlyEmbed from "@/components/CalendlyEmbed";
 
 export default async function ProfessorPage({
@@ -31,12 +31,12 @@ export default async function ProfessorPage({
           </p>
           <p>
             <strong className="text-indigo-300">Bio:</strong>{" "}
-            <span className="text-gray-400">{professor.short_bio}</span>
+            <span className="text-gray-400">{professor.shortBio}</span>
           </p>
         </div>
       </div>
       <div className="bg-gray-700 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-indigo-500/20">
-        <CalendlyEmbed calendlyLink={professor.calendly_event_link} />
+        <CalendlyEmbed calendlyLink={professor.calendlyEventLink} />
       </div>
     </div>
   );
