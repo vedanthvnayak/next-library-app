@@ -61,13 +61,13 @@ const OpenAiChatBot: React.FC = () => {
         data.response || "Sorry, something went wrong. Please ask about books.";
 
       setMessages((prevMessages) => [
-        ...prevMessages,
-        { user: "", bot: botMessage },
+        ...prevMessages.slice(0, -1),
+        { user: userMessage, bot: botMessage },
       ]);
     } catch (error) {
       console.error("Error:", error);
       setMessages((prevMessages) => [
-        ...prevMessages,
+        ...prevMessages.slice(0, -1),
         { user: userMessage, bot: "Sorry, something went wrong." },
       ]);
     } finally {
@@ -111,7 +111,7 @@ const OpenAiChatBot: React.FC = () => {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 transition-transform">
+    <div className="fixed sm:bottom-4 sm:right-4 bottom-16 right-2 z-50 transition-transform">
       {!isChatOpen ? (
         <button
           className="w-14 h-14 bg-gray-900 text-gray-100 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-700 transition-all duration-300 animate-float"
@@ -121,7 +121,7 @@ const OpenAiChatBot: React.FC = () => {
           <FaRobot className="text-2xl" />
         </button>
       ) : (
-        <div className="w-96 h-[32rem] bg-gray-900 text-gray-100 shadow-xl rounded-lg flex flex-col border border-gray-700 overflow-hidden transform perspective-1000 rotate-y-0 transition-transform duration-500 ease-in-out hover:rotate-y-5">
+        <div className="w-full sm:w-96 h-[calc(100vh-5rem)] sm:h-[32rem] bg-gray-900 text-gray-100 shadow-xl rounded-lg flex flex-col border border-gray-700 overflow-hidden transform perspective-1000 rotate-y-0 transition-transform duration-500 ease-in-out hover:rotate-y-5">
           <div className="bg-gray-800 p-4 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-100 flex items-center">
               <FaRobot className="mr-2" /> Chat Assistant
