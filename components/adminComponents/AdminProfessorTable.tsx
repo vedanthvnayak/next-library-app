@@ -88,8 +88,14 @@ export default function AdminProfessorTable({
   };
 
   const handleRefresh = async (professorEmail: string) => {
-    await checkInvitationAndUpdateCalendlyLink(professorEmail);
-    toast.info("Refreshing professor's Calendly link...");
+    const updateStatus = await checkInvitationAndUpdateCalendlyLink(
+      professorEmail
+    );
+    if (updateStatus.success) {
+      toast.info(updateStatus.message);
+    } else {
+      toast.info(updateStatus.message);
+    }
     router.refresh();
   };
 

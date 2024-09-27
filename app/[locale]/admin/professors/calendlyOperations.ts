@@ -335,7 +335,6 @@ export async function checkInvitationAndUpdateCalendlyLink(email: string) {
           ...professor,
           calendlyEventLink: calendlyLink,
         });
-        console.log("saaiiiiii", professor);
         return {
           success: true,
           message: "Calendly link updated successfully.",
