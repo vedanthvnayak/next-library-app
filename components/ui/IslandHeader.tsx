@@ -249,10 +249,10 @@ export default function Header() {
 
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 z-50 rounded-t-xl shadow-lg">
-        <div className="flex justify-around items-center h-16">
+        <div className="flex justify-between items-center h-16 px-4">
           <NavLink
             href={isAdmin ? "/admin" : "/"}
-            label=""
+            label={isAdmin ? "Dashboard" : "Home"}
             icon={
               isAdmin ? (
                 <LayoutDashboard className="h-6 w-6" />
@@ -260,17 +260,17 @@ export default function Header() {
                 <Home className="h-6 w-6" />
               )
             }
-            className="flex flex-col items-center"
+            className="w-16"
           />
           <NavLink
             href="/books"
-            label=""
+            label="Books"
             icon={<Book className="h-6 w-6" />}
-            className="flex flex-col items-center"
+            className="w-16"
           />
           <button
             onClick={toggleMobileMenu}
-            className="flex flex-col items-center text-gray-300 hover:text-white"
+            className="flex flex-col items-center justify-center text-gray-300 hover:text-white w-16 h-full"
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
@@ -282,15 +282,15 @@ export default function Header() {
           </button>
           <NavLink
             href="/about"
-            label=""
+            label="About"
             icon={<Info className="h-6 w-6" />}
-            className="flex flex-col items-center"
+            className="w-16"
           />
           <NavLink
             href="/professors"
-            label=""
+            label="Professors"
             icon={<GraduationCap className="h-6 w-6" />}
-            className="flex flex-col items-center"
+            className="w-16"
           />
         </div>
       </nav>
@@ -305,13 +305,32 @@ export default function Header() {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="md:hidden fixed bottom-16 left-0 right-0 bg-gray-900 border-t border-gray-800 z-40 rounded-t-xl shadow-lg p-4 space-y-4"
           >
-            {session && (
+            {session ? (
               <NavLink
                 href="/profile"
                 label="Profile"
                 icon={<User className="h-6 w-6" />}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 w-full"
+                isMobile={true}
               />
+            ) : (
+              <NavLink
+                href="/login"
+                label="Sign In"
+                icon={<User className="h-6 w-6" />}
+                className="flex items-center space-x-2 w-full"
+                isMobile={true}
+              />
+            )}
+
+            {session && (
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="flex items-center space-x-2 text-red-400 hover:bg-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 w-full"
+              >
+                <LogOut className="h-6 w-6" />
+                <span>Sign Out</span>
+              </button>
             )}
             <div className="flex items-center justify-center bg-gray-800 rounded-full p-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] border border-gray-700">
               <button
@@ -337,22 +356,6 @@ export default function Header() {
                 ಕನ್ನಡ
               </button>
             </div>
-            {session ? (
-              <button
-                onClick={() => signOut({ callbackUrl: "/" })}
-                className="flex items-center space-x-2 text-red-400 hover:bg-gray-700 px-3 py-2 rounded-full text-sm font-medium transition-colors duration-300 w-full"
-              >
-                <LogOut className="h-6 w-6" />
-                <span>Sign Out</span>
-              </button>
-            ) : (
-              <NavLink
-                href="/login"
-                label="Sign In"
-                icon={<User className="h-6 w-6" />}
-                className="flex items-center space-x-2"
-              />
-            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -366,15 +369,37 @@ interface NavLinkProps {
   icon?: React.ReactNode;
   className?: string;
   onClick?: (event: React.MouseEvent) => void;
+  isMobile?: boolean;
 }
 
-const NavLink = ({ href, label, icon, className, onClick }: NavLinkProps) => (
+const NavLink = ({
+  href,
+  label,
+  icon,
+  className,
+  onClick,
+  isMobile = false,
+}: NavLinkProps) => (
   <Link
     href={href}
-    className={`flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${className}`}
+    className={`${
+      isMobile
+        ? "flex flex-row items-center justify-start space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
+        : "flex flex-col items-center justify-center space-y-1 text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded-lg text-xs font-medium transition-colors duration-300"
+    } ${className}`}
     onClick={onClick}
   >
-    {icon && icon}
-    <span>{label}</span>
+    {icon && (
+      <div
+        className={`flex items-center justify-center ${
+          isMobile ? "h-6 w-6" : "h-6"
+        }`}
+      >
+        {icon}
+      </div>
+    )}
+    <span className={isMobile ? "text-sm" : "text-center text-xs"}>
+      {label}
+    </span>
   </Link>
 );
