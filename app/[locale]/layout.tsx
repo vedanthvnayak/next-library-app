@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import ".././globals.css";
-import Header from "@/components/ui/IslandHeader";
+import Header from "@/components/ui/StaticIslandHeader";
 import Footer from "@/components/ui/footer";
 import OpenAiChatBot from "@/components/ui/OpenAiChatBot";
 import AuthProvider from "@/components/AuthProvider";

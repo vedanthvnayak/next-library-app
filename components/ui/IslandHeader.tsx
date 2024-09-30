@@ -12,10 +12,8 @@ import {
   Book,
   Info,
   User,
-  Globe,
   GraduationCap,
   LayoutDashboard,
-  Menu,
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,8 +22,8 @@ export default function Header() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const router = useRouter();
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const collapseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -57,11 +55,6 @@ export default function Header() {
 
   const handleLinkClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-  };
-
-  const toggleExpanded = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    setIsExpanded(!isExpanded);
   };
 
   const toggleLanguage = (lang: "en" | "kn") => {
@@ -383,29 +376,34 @@ const NavLink = ({
   className,
   onClick,
   isMobile = false,
-}: NavLinkProps) => (
-  <Link
-    href={href}
-    className={`
-      ${
-        isMobile
-          ? "flex flex-col items-center justify-center space-y-1 text-gray-300 hover:text-white px-2 py-1 rounded-full text-[10px] font-medium transition-colors duration-300"
-          : "flex items-center justify-center space-x-1 text-gray-300 hover:text-white px-2 py-1 rounded-full text-base font-medium transition-colors duration-300"
-      }
-      ${className}
-      hover:bg-gray-700
-    `}
-    onClick={onClick}
-  >
-    {icon && (
-      <div
-        className={`flex items-center justify-center ${
-          isMobile ? "h-6 w-6" : "h-5 w-5"
-        }`}
-      >
-        {icon}
-      </div>
-    )}
-    <span className={isMobile ? "text-[10px]" : ""}>{label}</span>
-  </Link>
-);
+}: NavLinkProps) => {
+  const pathname = usePathname();
+  const isActive = pathname === href;
+
+  return (
+    <Link
+      href={href}
+      className={`
+        ${
+          isMobile
+            ? "flex flex-col items-center justify-center space-y-1 text-gray-300 hover:text-white px-2 py-1 rounded-full text-[10px] font-medium transition-colors duration-300"
+            : "flex items-center justify-center space-x-1 text-gray-300 hover:text-white px-2 py-1 rounded-full text-base font-medium transition-colors duration-300"
+        }
+        ${className}
+        ${isActive ? "bg-gray-700 text-white shadow-md" : "hover:bg-gray-700"}
+      `}
+      onClick={onClick}
+    >
+      {icon && (
+        <div
+          className={`flex items-center justify-center ${
+            isMobile ? "h-6 w-6" : "h-5 w-5"
+          }`}
+        >
+          {icon}
+        </div>
+      )}
+      <span className={isMobile ? "text-[10px]" : ""}>{label}</span>
+    </Link>
+  );
+};
