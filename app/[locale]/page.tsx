@@ -1,6 +1,5 @@
 import dynamic from "next/dynamic";
 import TopBooks from "@/components/ui/TopBooks";
-import { DrizzleManager } from "@/db/drizzleDbConnection";
 import { BookRepository } from "@/repository/books.repository";
 import { FaBook, FaDatabase } from "react-icons/fa";
 
