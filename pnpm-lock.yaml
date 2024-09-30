@@ -92,6 +92,9 @@ importers:
       openai:
         specifier: ^4.57.0
         version: 4.57.0(zod@3.23.8)
+      razorpay:
+        specifier: ^2.9.4
+        version: 2.9.4
       react:
         specifier: ^18
         version: 18.3.1
@@ -4532,6 +4535,9 @@ packages:
   range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
+
+  razorpay@2.9.4:
+    resolution: {integrity: sha512-CvOitdgM5HNr+zl174fHpZoJKVFYEfPoGx798kX+kg3haGDD3xinzxTzRUIOzLnL1/F4e7mUoIaGNn0h1E929Q==}
 
   react-calendly@4.3.1:
     resolution: {integrity: sha512-poyUH3NOUOlsotr8ho5WzbsbPuRAppaY+Jvu+C/PkwTP6WT807pNFI8+HrbbuRknXZbd75zpzysOJQvcu3P8Pg==}
@@ -10485,6 +10491,12 @@ snapshots:
       inherits: 2.0.4
 
   range-parser@1.2.1: {}
+
+  razorpay@2.9.4:
+    dependencies:
+      axios: 1.7.7
+    transitivePeerDependencies:
+      - debug
 
   react-calendly@4.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:

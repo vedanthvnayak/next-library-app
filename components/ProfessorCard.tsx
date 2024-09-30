@@ -24,7 +24,10 @@ export default function ProfessorCard({ professor }: ProfessorCardProps) {
         </p>
       </div>
       <Link
-        href={`/professors/${professor.id}`}
+        href={{
+          pathname: "/pay",
+          query: { id: professor.id }, // Pass only professor's ID
+        }}
         className="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition-colors duration-300 inline-block text-sm text-center"
       >
         Book Appointment
