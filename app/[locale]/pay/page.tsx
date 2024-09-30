@@ -33,8 +33,8 @@ export default function PaymentPage() {
           });
         },
         prefill: {
-          name: session.user.name,
-          email: session.user.email,
+          name: session?.user?.name,
+          email: session?.user?.email,
           contact: "9999999999",
         },
         theme: {
@@ -62,29 +62,29 @@ export default function PaymentPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="min-h-screen bg-black flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-gray-900 shadow-lg rounded-lg overflow-hidden border border-gray-800">
         <div className="p-6">
-          <h2 className="text-2xl font-bold text-center mb-2">
+          <h2 className="text-2xl font-bold text-center mb-2 text-white">
             {transactionDetails ? "Payment Successful" : "Payment Summary"}
           </h2>
-          <p className="text-center text-gray-600 mb-6">
+          <p className="text-center text-gray-400 mb-6">
             {transactionDetails
               ? "Thank you for your payment"
               : "Please review your payment details"}
           </p>
           {!transactionDetails ? (
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center text-white">
                 <span className="font-medium">Consultation Fee</span>
                 <span className="font-bold">₹300</span>
               </div>
-              <div className="flex justify-between items-center text-sm text-gray-500">
+              <div className="flex justify-between items-center text-sm text-gray-400">
                 <span>Professor ID</span>
                 <span>{id}</span>
               </div>
-              <div className="border-t border-gray-200 pt-4">
-                <div className="flex justify-between items-center font-bold">
+              <div className="border-t border-gray-700 pt-4">
+                <div className="flex justify-between items-center font-bold text-white">
                   <span>Total</span>
                   <span>₹300</span>
                 </div>
@@ -96,21 +96,21 @@ export default function PaymentPage() {
                 <CheckCircle className="w-16 h-16" />
               </div>
               <div className="space-y-2">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-400">
                   Professor ID:{" "}
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-white">
                     {transactionDetails.professorId}
                   </span>
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-400">
                   Payment ID:{" "}
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-white">
                     {transactionDetails.paymentId}
                   </span>
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-400">
                   Order ID:{" "}
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-white">
                     {transactionDetails.orderId}
                   </span>
                 </p>
@@ -121,7 +121,7 @@ export default function PaymentPage() {
         <div className="px-6 pb-6 space-y-2">
           {!transactionDetails ? (
             <button
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
               onClick={handlePayNow}
               disabled={loading}
             >
@@ -136,14 +136,14 @@ export default function PaymentPage() {
             </button>
           ) : (
             <button
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
               onClick={() => router.push(`/professors/${id}`)}
             >
               Continue To Professor Booking
             </button>
           )}
           <button
-            className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out flex items-center justify-center"
+            className="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-150 ease-in-out flex items-center justify-center"
             onClick={() => router.back()}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
