@@ -123,7 +123,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ profile }) => {
                 </button>
                 <button
                   onClick={() => router.push("/profile/topup")}
-                  className="w-1/2 flex justify-center items-center py-3 px-4 border border-transparent rounded-2xl shadow-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:scale-105 ml-2"
+                  className="w-1/2 flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:scale-105 ml-2"
                 >
                   <Wallet className="h-5 w-5" />
                   Top Up Wallet

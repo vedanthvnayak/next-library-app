@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { useSwipeable } from "react-swipeable";
+import { fetchWalletBalanceByEmail } from "@/app/[locale]/profile/action";
 
 // Utility hook to check if the screen is mobile
 const useIsMobile = () => {
@@ -15,7 +16,7 @@ const useIsMobile = () => {
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Set initial value
+    handleResize();
 
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -36,6 +37,27 @@ const TopUpWallet: React.FC = () => {
   );
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const isMobile = useIsMobile();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (session?.user?.email) {
+        try {
+          setIsLoading(true);
+          setError(null);
+          const newAmount = await fetchWalletBalanceByEmail(session.user.email);
+          setWalletBalance(newAmount.amount);
+        } catch (err) {
+          console.error("Error fetching wallet balance:", err);
+          setError("Failed to fetch balance");
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+    fetchBalance();
+  }, [session?.user?.email]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -46,19 +68,12 @@ const TopUpWallet: React.FC = () => {
 
   const handleAddFunds = () => {
     const numericAmount = Number(amount);
-    if (numericAmount > 0) {
-      setIsAdding(true);
-      setTimeout(() => {
-        setWalletBalance((prev) =>
-          prev !== undefined ? prev + numericAmount : numericAmount
-        );
-        console.log(
-          `Top-up completed: Email: ${session?.user?.email}, Amount: $${numericAmount}`
-        );
-        setAmount("");
-        setIsAdding(false);
-        router.push(`/pay?amount=${numericAmount}`);
-      }, 1000);
+    if (numericAmount > 0 && session?.user?.email) {
+      router.push(
+        `/pay?amount=${numericAmount}&email=${encodeURIComponent(
+          session.user.email
+        )}`
+      );
     }
   };
 
@@ -74,9 +89,15 @@ const TopUpWallet: React.FC = () => {
             <p className="text-gray-400 mt-2 text-base sm:text-lg">
               Current Balance:{" "}
               <span className="text-green-400 font-semibold">
-                {walletBalance !== undefined
-                  ? `$${walletBalance}`
-                  : "$undefined"}
+                {isLoading ? (
+                  "Loading..."
+                ) : error ? (
+                  <span className="text-red-400">{error}</span>
+                ) : walletBalance !== undefined ? (
+                  `$${walletBalance}`
+                ) : (
+                  "N/A"
+                )}
               </span>
             </p>
           </div>
@@ -144,6 +165,7 @@ const SwipeToAdd: React.FC<{ amount: number; onComplete: () => void }> = ({
     onSwiping: (e) => handleSwipe(e.deltaX),
     onSwipedRight: handleSwipeEnd,
     trackMouse: true,
+    trackTouch: true,
   });
 
   return (
@@ -162,22 +184,18 @@ const SwipeToAdd: React.FC<{ amount: number; onComplete: () => void }> = ({
       </div>
       <div
         {...swipeHandlers}
-        className="absolute left-0 top-0 h-full flex items-center"
-        style={{
-          width: "100%",
-          pointerEvents: "none",
-        }}
+        className="absolute left-0 top-0 h-full w-full flex items-center"
+        style={{ touchAction: "none" }}
       >
         <div
-          className="bg-white rounded-full p-2 shadow-md z-10 ml-1"
+          className="bg-white rounded-full p-2 shadow-md z-10 ml-1 sm:p-2.5 md:p-3"
           style={{
             transform: `translateX(${Math.min(progress * 2.8, 280)}px)`,
-            transition: "transform 0.3s ease-out",
-            pointerEvents: "auto",
+            transition: "transform 0.1s ease-out",
           }}
         >
           <svg
-            className="w-6 h-6 text-green-500"
+            className="w-6 h-6 text-green-500 sm:w-7 sm:h-7 md:w-8 md:h-8"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

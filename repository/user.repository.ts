@@ -344,4 +344,63 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
       throw new Error("Failed to update the profile image URL.");
     }
   }
+  async getWalletAmountByEmail(email: string): Promise<number | null> {
+    try {
+      const [user] = await db
+        .select({ wallet: usersTable.wallet })
+        .from(usersTable)
+        .where(eq(usersTable.email, email))
+        .execute();
+
+      if (!user) {
+        console.log("User not found with the provided email.");
+        return null;
+      }
+
+      return Number(user.wallet);
+    } catch (err) {
+      console.error("Error fetching wallet amount:", err);
+      throw new Error("Failed to fetch wallet amount.");
+    }
+  }
+  async addToWalletByEmail(
+    email: string,
+    amount: number
+  ): Promise<number | null> {
+    try {
+      // Check if the user exists and get their current wallet balance
+      const [user] = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.email, email))
+        .execute();
+
+      if (!user) {
+        console.log("User not found with the provided email.");
+        return null;
+      }
+
+      // Calculate the new wallet balance
+      const currentBalance = Number(user.wallet);
+      user.wallet = currentBalance + amount.toString();
+
+      // Update the wallet balance
+      const [updatedUser] = await db
+        .update(usersTable)
+        .set(user)
+        .where(eq(usersTable.email, email))
+        .returning({ wallet: usersTable.wallet });
+
+      if (!updatedUser) {
+        console.log("Unable to update the wallet balance.");
+        return null;
+      }
+
+      // Return the updated wallet balance
+      return Number(updatedUser.wallet);
+    } catch (err) {
+      console.error("Error adding to wallet:", err);
+      throw new Error("Failed to add to wallet balance.");
+    }
+  }
 }

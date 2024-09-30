@@ -4,19 +4,21 @@ import RequestedBooks from "@/components/ui/RequestedBooks";
 import { authOptions } from "@/utils/authOptions";
 import { User, BookOpen, Settings, LogIn } from "lucide-react";
 import Link from "next/link";
-import { getUserInfo } from "../admin/users/action";
+import { getUserInfo } from "@/app/[locale]/admin/users/action";
+import { fetchWalletBalanceByEmail } from "@/app/[locale]/profile/action";
 
 // Updated to Vercel
 async function getUserProfile(userId: number): Promise<any> {
   const session = await getServerSession(authOptions);
   const userInDb = await getUserInfo(userId);
+  const walletAmount = await fetchWalletBalanceByEmail(userInDb.userData.email);
   return {
     id: userId,
     name: userInDb.userData.username,
     email: userInDb.userData.email,
     password: userInDb.userData.password,
     profilePicture: userInDb.userData.profileimage,
-    wallet: userInDb.userData.wallet,
+    wallet: walletAmount.amount,
   };
 }
 

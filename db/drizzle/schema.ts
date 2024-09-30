@@ -30,7 +30,7 @@ export const users = pgTable("users", {
   role: varchar("role", { length: 255 }).notNull(),
   profileimage: varchar("profileimage", { length: 2048 }).notNull(),
   wallet: numeric("wallet", { precision: 10, scale: 2 })
-    .default(sql`0`)
+    .default(sql`0.00`)
     .notNull(),
 });
 
