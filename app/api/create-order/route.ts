@@ -8,7 +8,7 @@ const razorpay = new Razorpay({
 
 export async function POST() {
   const options = {
-    amount: 30000, // Amount in paise (₹300 = 30000 paise)
+    amount: 30000,
     currency: "INR",
     receipt: "order_rcptid_11",
   };

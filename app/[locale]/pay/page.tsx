@@ -35,10 +35,10 @@ export default function PaymentPage() {
         prefill: {
           name: session?.user?.name,
           email: session?.user?.email,
-          contact: "9999999999",
         },
         theme: {
-          color: "#3399cc",
+          color: "#111827",
+          background: "#111827",
         },
       };
 
@@ -139,12 +139,12 @@ export default function PaymentPage() {
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
               onClick={() => router.push(`/professors/${id}`)}
             >
-              Continue To Professor Booking
+              Continue To Select Booking Date
             </button>
           )}
           <button
             className="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-150 ease-in-out flex items-center justify-center"
-            onClick={() => router.back()}
+            onClick={() => router.push(`/professors/`)}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back

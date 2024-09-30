@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -192,7 +193,7 @@ export default function Header() {
                         <>
                           <Link
                             href="/profile"
-                            className="flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-full text-sm font-medium transition-colors duration-300"
+                            className="flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-full text-base font-medium transition-colors duration-300"
                             onClick={handleLinkClick}
                           >
                             <img
@@ -206,7 +207,7 @@ export default function Header() {
                           </Link>
                           <button
                             onClick={() => signOut({ callbackUrl: "/" })}
-                            className="flex items-center space-x-2 text-red-400 hover:bg-gray-700 px-3 py-2 rounded-full text-sm font-medium transition-colors duration-300"
+                            className="flex items-center space-x-2 text-red-400 hover:bg-gray-700 px-3 py-2 rounded-full text-base font-medium transition-colors duration-300"
                           >
                             <LogOut className="h-4 w-4" />
                             <span>Sign Out</span>
@@ -261,12 +262,14 @@ export default function Header() {
               )
             }
             className="w-16"
+            isMobile={true}
           />
           <NavLink
             href="/books"
             label="Books"
             icon={<Book className="h-6 w-6" />}
             className="w-16"
+            isMobile={true}
           />
           <button
             onClick={toggleMobileMenu}
@@ -278,19 +281,21 @@ export default function Header() {
             ) : (
               <ChevronUp className="h-6 w-6" />
             )}
-            <span className="text-xs mt-1">More</span>
+            <span className="text-[10px] mt-1">More</span>
           </button>
           <NavLink
             href="/about"
             label="About"
             icon={<Info className="h-6 w-6" />}
             className="w-16"
+            isMobile={true}
           />
           <NavLink
             href="/professors"
             label="Professors"
             icon={<GraduationCap className="h-6 w-6" />}
             className="w-16"
+            isMobile={true}
           />
         </div>
       </nav>
@@ -384,8 +389,8 @@ const NavLink = ({
     href={href}
     className={`${
       isMobile
-        ? "flex flex-row items-center justify-start space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
-        : "flex flex-col items-center justify-center space-y-1 text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded-lg text-xs font-medium transition-colors duration-300"
+        ? "flex flex-col items-center justify-center space-y-1 text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded-lg text-[10px] font-medium transition-colors duration-300"
+        : "flex flex-col items-center justify-center space-y-1 text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded-lg text-base font-medium transition-colors duration-300"
     } ${className}`}
     onClick={onClick}
   >
@@ -398,8 +403,6 @@ const NavLink = ({
         {icon}
       </div>
     )}
-    <span className={isMobile ? "text-sm" : "text-center text-xs"}>
-      {label}
-    </span>
+    <span className={isMobile ? "text-[10px]" : "text-center"}>{label}</span>
   </Link>
 );
