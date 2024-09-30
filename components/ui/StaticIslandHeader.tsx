@@ -64,7 +64,7 @@ export default function Header() {
         {/* Desktop Header */}
         <div className="hidden md:block">
           <div className="rounded-full shadow-lg border border-gray-600 mx-auto mt-4 hover:shadow-[0_0_15px_5px_rgba(255,255,255,0.3)] transition-shadow duration-300 max-w-5xl">
-            <div className="h-16 px-6 py-3 flex items-center justify-between">
+            <div className="h-14 px-6 py-3 flex items-center justify-between">
               <Link href="/" className="flex items-center flex-shrink-0">
                 <div className="flex items-center">
                   <Library className="h-7 w-7 text-gray-100 mr-3" />
@@ -93,11 +93,7 @@ export default function Header() {
                   label="Books"
                   onClick={handleLinkClick}
                 />
-                <NavLink
-                  href="/about"
-                  label="About"
-                  onClick={handleLinkClick}
-                />
+
                 {session ? (
                   <NavLink
                     href="/professors"
@@ -105,7 +101,11 @@ export default function Header() {
                     onClick={handleLinkClick}
                   />
                 ) : null}
-
+                <NavLink
+                  href="/about"
+                  label="About"
+                  onClick={handleLinkClick}
+                />
                 <div className="flex items-center bg-gray-800 rounded-full p-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] border border-gray-700">
                   <button
                     onClick={() => toggleLanguage("en")}
@@ -203,17 +203,18 @@ export default function Header() {
             )}
             <span className="text-[10px] mt-1">More</span>
           </button>
-          <NavLink
-            href="/about"
-            label="About"
-            icon={<Info className="h-6 w-6" />}
-            className="w-16"
-            isMobile={true}
-          />
+
           <NavLink
             href="/professors"
             label="Professors"
             icon={<GraduationCap className="h-6 w-6" />}
+            className="w-16"
+            isMobile={true}
+          />
+          <NavLink
+            href="/about"
+            label="About"
+            icon={<Info className="h-6 w-6" />}
             className="w-16"
             isMobile={true}
           />
@@ -315,10 +316,10 @@ const NavLink: React.FC<NavLinkProps> = ({
       className={`
         ${
           isMobile
-            ? "flex flex-col items-center justify-center space-y-1"
-            : "flex items-center justify-center space-x-2"
+            ? "flex flex-col items-center justify-center space-y-1 px-3 py-2 rounded-full text-sm font-medium transition-all duration-300"
+            : "flex items-center justify-center space-x-2 px-3 py-2 rounded-full text-base font-medium transition-all duration-300"
         }
-        px-3 py-2 rounded-full text-sm font-medium transition-all duration-300
+        
         ${
           isActive
             ? "bg-primary text-primary-foreground shadow-md"
