@@ -7,6 +7,7 @@ import {
   timestamp,
   serial,
   varchar,
+  numeric,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -28,6 +29,9 @@ export const users = pgTable("users", {
   password: varchar("password", { length: 255 }).notNull(),
   role: varchar("role", { length: 255 }).notNull(),
   profileimage: varchar("profileimage", { length: 2048 }).notNull(),
+  wallet: numeric("wallet", { precision: 10, scale: 2 })
+    .default(sql`0`)
+    .notNull(),
 });
 
 export const transactions = pgTable("transactions", {

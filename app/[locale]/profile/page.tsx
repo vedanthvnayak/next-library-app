@@ -16,6 +16,7 @@ async function getUserProfile(userId: number): Promise<any> {
     email: userInDb.userData.email,
     password: userInDb.userData.password,
     profilePicture: userInDb.userData.profileimage,
+    wallet: userInDb.userData.wallet,
   };
 }
 

@@ -60,10 +60,10 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-gray-900 bg-opacity-70 font-sans">
+      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-opacity-70 font-sans">
         {/* Desktop Header */}
         <div className="hidden md:block">
-          <div className="rounded-full shadow-lg border border-gray-600 mx-auto mt-4 hover:shadow-[0_0_15px_5px_rgba(255,255,255,0.3)] transition-shadow duration-300 max-w-5xl">
+          <div className="rounded-full shadow-lg border bg-gray-900 border-gray-600 mx-auto mt-4 hover:shadow-[0_0_15px_5px_rgba(255,255,255,0.3)] transition-shadow duration-300 max-w-5xl">
             <div className="h-14 px-6 py-3 flex items-center justify-between">
               <Link href="/" className="flex items-center flex-shrink-0">
                 <div className="flex items-center">

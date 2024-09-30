@@ -4,6 +4,7 @@ export interface IUserBase {
   password: string;
   role: string;
   profileimage?: string;
+  wallet?: number;
 }
 
 export interface IUser extends IUserBase {

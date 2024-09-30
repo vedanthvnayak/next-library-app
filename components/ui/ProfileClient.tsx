@@ -11,6 +11,8 @@ import {
   Eye,
   EyeOff,
   Lock,
+  Wallet,
+  PlusCircle,
 } from "lucide-react";
 import { updateUserNameAndPassword } from "@/app/[locale]/admin/users/action";
 import { useRouter } from "next/navigation";
@@ -23,6 +25,7 @@ interface Profile {
   password: string;
   role: string;
   profilePicture: string;
+  wallet: number;
 }
 
 interface ProfileClientProps {
@@ -44,7 +47,6 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ profile }) => {
   const handleImageUploadComplete = (res: any) => {
     if (res?.[0]?.url) {
       setProfileImage(res[0].url);
-      // console.log("Uploaded image URL: ", res[0].url);
       uploadProfileImage(profile.email, res[0].url);
     }
   };
@@ -52,15 +54,9 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ profile }) => {
   const handleSave = async () => {
     console.log("Saving profile:", { name, password, profileImage });
     await updateUserNameAndPassword(profile!.email, name, password);
-    // saveProfileImage(profile!.email, profileImage);
     router.refresh();
     setIsEditing(false);
   };
-
-  // const saveProfileImage = (email: string, imageUrl: string) => {
-  //   console.log("Saving profile image for user:", { email, imageUrl });
-  //   // Replace with actual API call to save profile image link
-  // };
 
   if (!profile) {
     return (
@@ -111,13 +107,26 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ profile }) => {
                 label="Email"
                 value={profile.email}
               />
-              <div className="pt-4">
+              <ProfileField
+                icon={<Wallet className="h-5 w-5" />}
+                label="Wallet"
+                value={`$${profile.wallet}`}
+              />
+
+              <div className="flex justify-between">
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-105"
+                  className="w-1/2 flex justify-center items-center py-3 px-4 border border-transparent rounded-2xl shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-105 mr-2"
                 >
                   <Edit2 className="w-5 h-5 mr-2" aria-hidden="true" />
                   Edit Profile
+                </button>
+                <button
+                  onClick={() => router.push("/profile/topup")}
+                  className="w-1/2 flex justify-center items-center py-3 px-4 border border-transparent rounded-2xl shadow-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:scale-105 ml-2"
+                >
+                  <Wallet className="h-5 w-5" />
+                  Top Up Wallet
                 </button>
               </div>
             </div>
@@ -222,18 +231,22 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ profile }) => {
   );
 };
 
-const ProfileField: React.FC<{
+export default ProfileClient;
+
+interface ProfileFieldProps {
   icon: React.ReactNode;
   label: string;
   value: string;
-}> = ({ icon, label, value }) => (
-  <div>
-    <label className="block text-sm font-medium text-gray-400">{label}</label>
-    <div className="mt-1 flex items-center">
-      <span className="text-gray-400 mr-2">{icon}</span>
-      <span className="text-white">{value}</span>
-    </div>
-  </div>
-);
+}
 
-export default ProfileClient;
+const ProfileField: React.FC<ProfileFieldProps> = ({ icon, label, value }) => {
+  return (
+    <div className="flex items-center text-gray-400">
+      <div className="mr-2">{icon}</div>
+      <div>
+        <p className="font-bold text-sm">{label}</p>
+        <p className="text-white">{value}</p>
+      </div>
+    </div>
+  );
+};
