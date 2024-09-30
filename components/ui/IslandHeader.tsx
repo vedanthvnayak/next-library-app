@@ -136,7 +136,6 @@ export default function Header() {
                         <NavLink
                           href="/admin"
                           label="Dashboard"
-                          icon={<LayoutDashboard className="h-4 w-4" />}
                           onClick={handleLinkClick}
                         />
                       ) : (

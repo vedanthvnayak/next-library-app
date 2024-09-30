@@ -5,16 +5,32 @@ import { useState, useEffect } from "react";
 import { Loader2, CheckCircle, ArrowLeft } from "lucide-react";
 import { useSession } from "next-auth/react";
 
+interface PayDetails {
+  professorId: string; // Corrected type to string
+  paymentId: string;
+  orderId: string;
+}
+
 export default function PaymentPage() {
   const { data: session } = useSession();
   const router = useRouter();
-  const searchParams = new URLSearchParams(window.location.search);
-  const id = searchParams.get("id");
-
   const [loading, setLoading] = useState(false);
-  const [transactionDetails, setTransactionDetails] = useState(null);
+  const [transactionDetails, setTransactionDetails] =
+    useState<PayDetails | null>(null);
+  const [id, setId] = useState<string | null>(null); // Updated type for id
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const professorId = searchParams.get("id");
+    setId(professorId);
+  }, []);
 
   const handlePayNow = async () => {
+    if (!id) {
+      console.error("Professor ID is not available");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch("/api/create-order", { method: "POST" });
@@ -31,6 +47,11 @@ export default function PaymentPage() {
             paymentId: response.razorpay_payment_id,
             orderId: response.razorpay_order_id,
           });
+
+          // Wait for 3 seconds before redirecting
+          setTimeout(() => {
+            router.push(`/professors/${id}`);
+          }, 2000);
         },
         prefill: {
           name: session?.user?.name,
@@ -135,12 +156,17 @@ export default function PaymentPage() {
               )}
             </button>
           ) : (
-            <button
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
-              onClick={() => router.push(`/professors/${id}`)}
-            >
-              Continue To Select Booking Date
-            </button>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-400">
+                If not redirected in 2second click below:
+              </p>
+              <button
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out"
+                onClick={() => router.push(`/professors/${id}`)}
+              >
+                Continue To Select Booking Date
+              </button>
+            </div>
           )}
           <button
             className="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-150 ease-in-out flex items-center justify-center"
