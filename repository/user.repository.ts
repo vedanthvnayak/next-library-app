@@ -382,7 +382,7 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
 
       // Calculate the new wallet balance
       const currentBalance = Number(user.wallet);
-      user.wallet = currentBalance + amount.toString();
+      user.wallet = (currentBalance + amount).toString();
 
       // Update the wallet balance
       const [updatedUser] = await db
