@@ -158,7 +158,7 @@ export default function PaymentPage() {
           ) : (
             <div className="space-y-2">
               <p className="text-sm text-gray-400">
-                If not redirected in 2second click below:
+                If not redirected in 2 seconds click below:
               </p>
               <button
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out"

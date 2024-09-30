@@ -131,7 +131,7 @@ export default function Header() {
                       </div>
                     </Link>
 
-                    <nav className="flex items-center space-x-4 ml-auto">
+                    <nav className="flex items-center space-x-2 ml-auto">
                       {isAdmin ? (
                         <NavLink
                           href="/admin"
@@ -166,7 +166,7 @@ export default function Header() {
                       <div className="flex items-center bg-gray-800 rounded-full p-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] border border-gray-700">
                         <button
                           onClick={() => toggleLanguage("en")}
-                          className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ${
+                          className={`px-2 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
                             currentLanguage === "en"
                               ? "bg-gray-700 text-white shadow-[0_2px_4px_rgba(0,0,0,0.1)]"
                               : "text-gray-400 hover:text-white"
@@ -177,7 +177,7 @@ export default function Header() {
                         </button>
                         <button
                           onClick={() => toggleLanguage("kn")}
-                          className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ${
+                          className={`px-2 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
                             currentLanguage === "kn"
                               ? "bg-gray-700 text-white shadow-[0_2px_4px_rgba(0,0,0,0.1)]"
                               : "text-gray-400 hover:text-white"
@@ -192,21 +192,21 @@ export default function Header() {
                         <>
                           <Link
                             href="/profile"
-                            className="flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-full text-base font-medium transition-colors duration-300"
+                            className="flex items-center space-x-1 text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded-full text-base font-medium transition-colors duration-300"
                             onClick={handleLinkClick}
                           >
                             <img
                               src={session.user.image || "/default-profile.png"}
                               alt="Profile"
-                              className="h-6 w-6 rounded-full"
+                              className="h-5 w-5 rounded-full"
                             />
-                            <span className="max-w-[150px] truncate">
+                            <span className="max-w-[100px] truncate">
                               {session.user?.name}
                             </span>
                           </Link>
                           <button
                             onClick={() => signOut({ callbackUrl: "/" })}
-                            className="flex items-center space-x-2 text-red-400 hover:bg-gray-700 px-3 py-2 rounded-full text-base font-medium transition-colors duration-300"
+                            className="flex items-center space-x-1 text-red-400 hover:bg-gray-700 px-2 py-1 rounded-full text-base font-medium transition-colors duration-300"
                           >
                             <LogOut className="h-4 w-4" />
                             <span>Sign Out</span>
@@ -310,19 +310,19 @@ export default function Header() {
             className="md:hidden fixed bottom-16 left-0 right-0 bg-gray-900 border-t border-gray-800 z-40 rounded-t-xl shadow-lg p-4 space-y-4"
           >
             {session ? (
-              <NavLink
+              <Link
                 href="/profile"
-                label="Profile"
-                icon={<User className="h-6 w-6" />}
-                className="flex items-center space-x-2 w-full"
-                isMobile={true}
-              />
+                className="flex flex-row items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 w-full"
+              >
+                <User className="h-6 w-6" />
+                <span>Profile</span>
+              </Link>
             ) : (
               <NavLink
                 href="/login"
                 label="Sign In"
                 icon={<User className="h-6 w-6" />}
-                className="flex items-center space-x-2 w-full"
+                className="w-full"
                 isMobile={true}
               />
             )}
@@ -330,7 +330,7 @@ export default function Header() {
             {session && (
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="flex items-center space-x-2 text-red-400 hover:bg-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 w-full"
+                className="flex items-center space-x-2 text-red-400 hover:bg-gray-700 px-3 py-2 rounded-lg text-base font-medium transition-colors duration-300 w-full"
               >
                 <LogOut className="h-6 w-6" />
                 <span>Sign Out</span>
@@ -386,22 +386,26 @@ const NavLink = ({
 }: NavLinkProps) => (
   <Link
     href={href}
-    className={`${
-      isMobile
-        ? "flex flex-col items-center justify-center space-y-1 text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded-lg text-[10px] font-medium transition-colors duration-300"
-        : "flex flex-col items-center justify-center space-y-1 text-gray-300 hover:text-white hover:bg-gray-700 px-2 py-1 rounded-lg text-base font-medium transition-colors duration-300"
-    } ${className}`}
+    className={`
+      ${
+        isMobile
+          ? "flex flex-col items-center justify-center space-y-1 text-gray-300 hover:text-white px-2 py-1 rounded-full text-[10px] font-medium transition-colors duration-300"
+          : "flex items-center justify-center space-x-1 text-gray-300 hover:text-white px-2 py-1 rounded-full text-base font-medium transition-colors duration-300"
+      }
+      ${className}
+      hover:bg-gray-700
+    `}
     onClick={onClick}
   >
     {icon && (
       <div
         className={`flex items-center justify-center ${
-          isMobile ? "h-6 w-6" : "h-6"
+          isMobile ? "h-6 w-6" : "h-5 w-5"
         }`}
       >
         {icon}
       </div>
     )}
-    <span className={isMobile ? "text-[10px]" : "text-center"}>{label}</span>
+    <span className={isMobile ? "text-[10px]" : ""}>{label}</span>
   </Link>
 );
