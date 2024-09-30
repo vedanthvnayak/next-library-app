@@ -117,7 +117,9 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
 
       if (deletingUser) {
         await db.delete(usersTable).where(eq(usersTable.userid, id)).execute();
-        return deletingUser as IUser;
+        // Convert deletingUser to IUser type, excluding the 'wallet' property
+        const { wallet, ...userWithoutWallet } = deletingUser;
+        return userWithoutWallet as IUser;
       } else {
         console.log("User does not exist.");
         return null;
@@ -141,10 +143,15 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
         .where(eq(usersTable.userid, id))
         .execute();
 
-      return user as IUser;
+      if (!user) {
+        return null;
+      }
+
+      const { wallet, ...userWithoutWallet } = user;
+      return userWithoutWallet as IUser;
     } catch (err) {
       console.error("Error fetching user:", err);
-      throw err;
+      throw new Error("Failed to fetch user");
     }
   }
 
@@ -195,24 +202,25 @@ export class UserRepository implements IRepository<IUserBase, IUser> {
       default:
         orderByClause = sql`${usersTable.username} ASC`; // Default sorting
     }
-
     // Fetch items with search and sorting
-    const items: IUser[] = (await db
+    const items = await db
       .select()
       .from(usersTable)
       .where(searchWhereClause)
       .orderBy(orderByClause)
       .offset(params.offset)
-      .limit(params.limit)) as IUser[];
+      .limit(params.limit);
 
     // Count total items matching the search criteria
     const [{ count: total }] = await db
       .select({ count: sql<number>`count(*)` })
       .from(usersTable)
       .where(searchWhereClause);
-
     return {
-      items,
+      items: items.map((item) => ({
+        ...item,
+        wallet: Number(item.wallet),
+      })),
       pagination: {
         offset: params.offset,
         limit: params.limit,
