@@ -103,7 +103,7 @@ export default function Component() {
               ) : error ? (
                 <span className="text-red-400">{error}</span>
               ) : walletBalance !== undefined ? (
-                `$${walletBalance.toFixed(2)}`
+                `🪙 ${walletBalance.toFixed(2)}`
               ) : (
                 "N/A"
               )}
@@ -121,7 +121,7 @@ export default function Component() {
             value={amount}
             onChange={handleAmountChange}
             className="w-full p-4 rounded-2xl bg-gray-700 text-white text-lg border-2 border-transparent focus:border-green-500 focus:outline-none transition-colors"
-            placeholder="Enter amount"
+            placeholder="Enter amount in Rupee ₹"
             disabled={isAdding}
           />
         </div>

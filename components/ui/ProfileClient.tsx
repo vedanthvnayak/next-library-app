@@ -110,7 +110,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ profile }) => {
               <ProfileField
                 icon={<Wallet className="h-5 w-5" />}
                 label="Wallet"
-                value={`$${profile.wallet}`}
+                value={`🪙 ${profile.wallet}`}
               />
 
               <div className="flex flex-col sm:flex-row justify-between gap-4 mt-6">

@@ -39,7 +39,7 @@ export default function RealisticWallet() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md space-y-6">
         <motion.div
           className="relative"
           initial={{ scale: 0.9, opacity: 0 }}
@@ -192,7 +192,7 @@ export default function RealisticWallet() {
                     exit={{ y: -20, opacity: 0 }}
                     transition={{ duration: 0.5 }}
                   >
-                    ${walletBalance?.toFixed(2)}
+                    🪙 {walletBalance?.toFixed(2)}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -213,6 +213,25 @@ export default function RealisticWallet() {
             </motion.div>
           </div>
         </motion.div>
+
+        <motion.div
+          className="bg-gray-800 rounded-xl p-4 shadow-lg"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.5 }}
+        >
+          <h3 className="text-lg font-semibold text-gray-300 mb-2">
+            Conversion Rate
+          </h3>
+          <div className="flex items-center justify-center space-x-2 text-2xl">
+            <span role="img" aria-label="Gold Coin">
+              🪙
+            </span>
+            <span className="text-gray-400">1 = </span>
+            <span className="text-gray-300">₹1</span>
+          </div>
+        </motion.div>
+
         <motion.div
           className="mt-8 text-center"
           initial={{ opacity: 0 }}
