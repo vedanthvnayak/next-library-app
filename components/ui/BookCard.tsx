@@ -11,6 +11,7 @@ import {
 import Modal from "@/components/adminComponents/Modal";
 import { requestBook } from "@/app/[locale]/books/action";
 import { IBook } from "@/repository/models/books.model";
+import Image from "next/image";
 
 interface NotificationProps {
   message: string;
@@ -54,6 +55,7 @@ export default function Component({ book, session }: BookCardProps) {
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const totalCopies = book.totalNumberOfCopies;
   const availableCopies = book.availableNumberOfCopies;
@@ -101,11 +103,24 @@ export default function Component({ book, session }: BookCardProps) {
       >
         <div className="relative w-full h-60">
           {book.coverimagelink ? (
-            <img
-              src={book.coverimagelink}
-              alt={`Cover of ${book.title}`}
-              className="w-full h-full object-contain"
-            />
+            <>
+              <Image
+                src={book.coverimagelink}
+                alt={`Cover of ${book.title}`}
+                layout="fill"
+                objectFit="contain"
+                loading="lazy"
+                onLoad={() => setImageLoaded(true)}
+                className={`transition-opacity duration-300 ${
+                  imageLoaded ? "opacity-100" : "opacity-0"
+                }`}
+              />
+              {!imageLoaded && (
+                <div className="absolute inset-0 bg-gray-700 animate-pulse flex items-center justify-center">
+                  <BookOpenIcon className="h-24 w-24 text-gray-400" />
+                </div>
+              )}
+            </>
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-700">
               <BookOpenIcon className="h-24 w-24 text-gray-400" />
