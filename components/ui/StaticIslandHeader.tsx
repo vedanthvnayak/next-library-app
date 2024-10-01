@@ -14,6 +14,7 @@ import {
   User,
   GraduationCap,
   LayoutDashboard,
+  Wallet,
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -232,13 +233,22 @@ export default function Header() {
             className="md:hidden fixed bottom-16 left-0 right-0 bg-gray-900 border-t border-gray-800 z-40 rounded-t-xl shadow-lg p-4 space-y-4"
           >
             {session ? (
-              <Link
-                href="/profile"
-                className="flex flex-row items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 w-full"
-              >
-                <User className="h-6 w-6" />
-                <span>Profile</span>
-              </Link>
+              <>
+                <Link
+                  href="/profile"
+                  className="flex flex-row items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 w-full"
+                >
+                  <User className="h-6 w-6" />
+                  <span>Profile</span>
+                </Link>
+                <Link
+                  href="/profile/wallet"
+                  className="flex flex-row items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 w-full"
+                >
+                  <Wallet className="h-6 w-6" />
+                  <span>My Wallet</span>
+                </Link>
+              </>
             ) : (
               <NavLink
                 href="/login"
