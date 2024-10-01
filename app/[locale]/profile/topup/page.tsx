@@ -6,13 +6,12 @@ import React, { useState, useEffect } from "react";
 import { useSwipeable } from "react-swipeable";
 import { fetchWalletBalanceByEmail } from "@/app/[locale]/profile/action";
 
-// Utility hook to check if the screen is mobile
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // Adjust the width threshold as needed
+      setIsMobile(window.innerWidth < 768);
     };
 
     window.addEventListener("resize", handleResize);
@@ -26,9 +25,7 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-// Simulating a session object
-
-const TopUpWallet: React.FC = () => {
+export default function Component() {
   const { data: session } = useSession();
   const router = useRouter();
   const [amount, setAmount] = useState<string>("");
@@ -78,66 +75,73 @@ const TopUpWallet: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-lg shadow-lg w-full max-w-md">
-        <div className="p-6 sm:p-8">
-          <div className="text-center mb-6 sm:mb-8">
-            <div className="text-green-400 text-5xl sm:text-6xl mb-4">
-              <i className="fas fa-wallet"></i>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold">Top Up Wallet</h2>
-            <p className="text-gray-400 mt-2 text-base sm:text-lg">
-              Current Balance:{" "}
-              <span className="text-green-400 font-semibold">
-                {isLoading ? (
-                  "Loading..."
-                ) : error ? (
-                  <span className="text-red-400">{error}</span>
-                ) : walletBalance !== undefined ? (
-                  `$${walletBalance}`
-                ) : (
-                  "N/A"
-                )}
-              </span>
-            </p>
-          </div>
-
-          <div className="mb-6">
-            <label
-              htmlFor="amount"
-              className="block text-gray-300 mb-2 text-base sm:text-lg"
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
+      <div className="w-full max-w-md p-8 rounded-3xl bg-gray-800 shadow-[0_10px_20px_rgba(0,0,0,0.2)]">
+        <div className="text-center mb-8">
+          <div className="text-5xl mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              className="w-20 h-20 mx-auto"
             >
-              Amount to Add
-            </label>
-            <input
-              id="amount"
-              type="number"
-              value={amount}
-              onChange={handleAmountChange}
-              className="w-full p-3 sm:p-4 rounded-lg bg-gray-700 text-white text-base sm:text-lg border border-gray-600 focus:border-green-500 focus:outline-none transition-colors"
-              placeholder="Enter amount"
-              disabled={isAdding}
-            />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+              />
+            </svg>
           </div>
-
-          {isMobile ? (
-            <SwipeToAdd amount={Number(amount)} onComplete={handleAddFunds} />
-          ) : (
-            <button
-              onClick={handleAddFunds}
-              className="w-full p-3 sm:p-4 rounded-lg bg-green-500 hover:bg-green-600 text-white font-bold text-base sm:text-lg transition-colors"
-              disabled={!amount || Number(amount) <= 0 || isAdding}
-            >
-              {isAdding ? "Adding..." : "Add Funds"}
-            </button>
-          )}
+          <h2 className="text-3xl font-bold text-white">Top Up Wallet</h2>
+          <p className="text-gray-400 mt-2">
+            Current Balance:{" "}
+            <span className="font-semibold text-green-600 bg-clip-text text-transparent">
+              {isLoading ? (
+                "Loading..."
+              ) : error ? (
+                <span className="text-red-400">{error}</span>
+              ) : walletBalance !== undefined ? (
+                `$${walletBalance.toFixed(2)}`
+              ) : (
+                "N/A"
+              )}
+            </span>
+          </p>
         </div>
+
+        <div className="mb-6">
+          <label htmlFor="amount" className="block text-gray-300 mb-2 text-lg">
+            Amount to Add
+          </label>
+          <input
+            id="amount"
+            type="number"
+            value={amount}
+            onChange={handleAmountChange}
+            className="w-full p-4 rounded-2xl bg-gray-700 text-white text-lg border-2 border-transparent focus:border-green-500 focus:outline-none transition-colors"
+            placeholder="Enter amount"
+            disabled={isAdding}
+          />
+        </div>
+
+        {isMobile ? (
+          <SwipeToAdd amount={Number(amount)} onComplete={handleAddFunds} />
+        ) : (
+          <button
+            onClick={handleAddFunds}
+            className="w-full p-4 rounded-2xl bg-green-500 text-white font-bold text-lg transition-all hover:shadow-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+            disabled={!amount || Number(amount) <= 0 || isAdding}
+          >
+            {isAdding ? "Adding..." : "Add Funds"}
+          </button>
+        )}
       </div>
     </div>
   );
-};
+}
 
-// Swipe to Add Component
 const SwipeToAdd: React.FC<{ amount: number; onComplete: () => void }> = ({
   amount,
   onComplete,
@@ -169,10 +173,10 @@ const SwipeToAdd: React.FC<{ amount: number; onComplete: () => void }> = ({
   });
 
   return (
-    <div className="relative w-full h-14 bg-green-500 rounded-full shadow-inner mt-6 overflow-hidden">
+    <div className="relative w-full h-16 bg-gray-700 rounded-full shadow-inner mt-6 overflow-hidden">
       <div className="absolute inset-0 flex items-center justify-center">
         <span
-          className="text-white text-base font-semibold z-10 transition-opacity duration-300"
+          className="text-white text-lg font-semibold z-10 transition-opacity duration-300"
           style={{ opacity: 1 - progress / 100 }}
         >
           {amount === 0
@@ -188,14 +192,14 @@ const SwipeToAdd: React.FC<{ amount: number; onComplete: () => void }> = ({
         style={{ touchAction: "none" }}
       >
         <div
-          className="bg-white rounded-full p-2 shadow-md z-10 ml-1 sm:p-2.5 md:p-3"
+          className="bg-gray-800 rounded-full p-3 shadow-md z-10 ml-1"
           style={{
             transform: `translateX(${Math.min(progress * 2.8, 280)}px)`,
             transition: "transform 0.1s ease-out",
           }}
         >
           <svg
-            className="w-6 h-6 text-green-500 sm:w-7 sm:h-7 md:w-8 md:h-8"
+            className="w-8 h-8 text-green-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -222,5 +226,3 @@ const SwipeToAdd: React.FC<{ amount: number; onComplete: () => void }> = ({
     </div>
   );
 };
-
-export default TopUpWallet;

@@ -113,20 +113,22 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ profile }) => {
                 value={`$${profile.wallet}`}
               />
 
-              <div className="flex justify-between">
+              <div className="flex flex-col sm:flex-row justify-between gap-4 mt-6">
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="w-1/2 flex justify-center items-center py-3 px-4 border border-transparent rounded-2xl shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-105 mr-2"
+                  className="w-full sm:w-1/2 flex justify-center items-center py-3 px-4 border border-transparent rounded-2xl shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-105"
                 >
                   <Edit2 className="w-5 h-5 mr-2" aria-hidden="true" />
-                  Edit Profile
+                  <span className="hidden sm:inline">Edit Profile</span>
+                  <span className="sm:hidden">Edit</span>
                 </button>
                 <button
-                  onClick={() => router.push("/profile/topup")}
-                  className="w-1/2 flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:scale-105 ml-2"
+                  onClick={() => router.push("/profile/wallet")}
+                  className="w-full sm:w-1/2 flex justify-center items-center py-3 px-4 border border-transparent rounded-2xl shadow-lg text-sm font-medium text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:scale-105"
                 >
-                  <Wallet className="h-5 w-5" />
-                  Top Up Wallet
+                  <Wallet className="h-5 w-5 mr-2" />
+                  <span className="hidden sm:inline">My Wallet</span>
+                  <span className="sm:hidden">Wallet</span>
                 </button>
               </div>
             </div>
