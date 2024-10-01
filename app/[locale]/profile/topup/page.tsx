@@ -97,7 +97,7 @@ export default function Component() {
           <h2 className="text-3xl font-bold text-white">Top Up Wallet</h2>
           <p className="text-gray-400 mt-2">
             Current Balance:{" "}
-            <span className="font-semibold text-green-600 bg-clip-text text-transparent">
+            <span className="font-semibold text-green-400">
               {isLoading ? (
                 "Loading..."
               ) : error ? (
